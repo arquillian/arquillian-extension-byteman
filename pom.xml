@@ -17,7 +17,7 @@
     <artifactId>arquillian-extension-byteman</artifactId>
     <name>Arquillian Extension Byteman</name>
     <description>Byteman integration for the Arquillian project</description>
-    <version>1.0.0.Alpha2</version>
+    <version>1.0.0.Final-SNAPSHOT</version>
 
     <scm>
         <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-byteman.git</connection>
