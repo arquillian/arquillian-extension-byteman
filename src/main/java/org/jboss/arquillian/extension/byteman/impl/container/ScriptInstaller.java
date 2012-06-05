@@ -46,11 +46,14 @@ public class ScriptInstaller
       {
          if(scriptStream != null && scriptStream.available() > 0)
          {
+            BytemanConfiguration config = BytemanConfiguration.from(
+                    Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+            );
             String ruleKey = Thread.currentThread().getName();
             String ruleScript = GenerateScriptUtil.toString(scriptStream);
             try
             {
-               Submit submit = new Submit();
+               Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
                submit.addScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
             }
             catch (Exception e)
@@ -72,11 +75,15 @@ public class ScriptInstaller
 
       if(scriptStream != null)
       {
+         BytemanConfiguration config = BytemanConfiguration.from(
+                 Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+         );
+
          String ruleKey = Thread.currentThread().getName();
          String ruleScript = GenerateScriptUtil.toString(scriptStream);
          try
          {
-            Submit submit = new Submit();
+             Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
             submit.deleteScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
          }
          catch (Exception e)

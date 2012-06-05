@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.extension.byteman.test;
+package org.jboss.arquillian.extension.byteman.test.container;
 
 import javax.ejb.EJB;
 import javax.ejb.EJBException;
@@ -23,6 +23,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.extension.byteman.api.BMRules;
+import org.jboss.arquillian.extension.byteman.test.model.StatelessManager;
+import org.jboss.arquillian.extension.byteman.test.model.StatelessManagerBean;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.Archive;
@@ -41,10 +43,10 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 @BMRules(
         @BMRule(
-                name = "Throw exception on success", targetClass = "StatelessManagerBean", targetMethod = "forcedClassLevelFailure", 
+                name = "Throw exception on success class", targetClass = "StatelessManagerBean", targetMethod = "forcedClassLevelFailure",
                 action = "throw new java.lang.RuntimeException()")
 )
-public class BytemanFaultInjectionTestCase {
+public class ContainerFaultInjectionTestCase {
 
     @Deployment @OverProtocol("Servlet 3.0")
     public static Archive<?> createDeployment() {
@@ -57,7 +59,7 @@ public class BytemanFaultInjectionTestCase {
 
     @Test(expected = EJBException.class)
     @BMRule(
-            name = "Throw exception on success", targetClass = "StatelessManagerBean", targetMethod = "forcedMethodLevelFailure", 
+            name = "Throw exception on success method", targetClass = "StatelessManagerBean", targetMethod = "forcedMethodLevelFailure",
             action = "throw new java.lang.RuntimeException()")
     public void shouldBeAbleToInjectMethodLevelThrowRule()
     {

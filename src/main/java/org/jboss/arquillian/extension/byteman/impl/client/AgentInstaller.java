@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.extension.byteman.impl.container;
+package org.jboss.arquillian.extension.byteman.impl.client;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -22,10 +22,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 
+import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.GenerateScriptUtil;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 import com.sun.tools.attach.VirtualMachine;
 
@@ -35,15 +42,16 @@ import com.sun.tools.attach.VirtualMachine;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AgentInstaller {
+public class AgentInstaller 
+{
+    @Inject
+    private Instance<ArquillianDescriptor> descriptorInst;
 
     public void install(@Observes(precedence = 1) BeforeSuite event)
     {
         try
         {
-            BytemanConfiguration config = BytemanConfiguration.from(
-                    Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
-            );
+            BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
 
             if(!config.autoInstallAgent())
             {
@@ -72,15 +80,24 @@ public class AgentInstaller {
             File bytemanLib = new File(bytemanHome, "lib");
             bytemanLib.mkdirs();
 
-            InputStream bytemanInputJar = Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_JAR);
+            InputStream bytemanInputJar = ShrinkWrap.create(JavaArchive.class)
+                    .addPackages(true, "org.jboss.byteman")
+                    .setManifest(
+                            new StringAsset("Manifest-Version: 1.0\n"
+                                    + "Created-By: Arquillian\n"
+                                    + "Implementation-Version: 0.0.0.Arq\n"
+                                    + "Premain-Class: org.jboss.byteman.agent.Main\n"
+                                    + "Agent-Class: org.jboss.byteman.agent.Main\n"
+                                    + "Can-Redefine-Classes: true\n"
+                                    + "Can-Retransform-Classes: true\n")).as(ZipExporter.class).exportAsInputStream();
+
 
             File bytemanJar = new File(bytemanLib, BytemanConfiguration.BYTEMAN_JAR);
-
             GenerateScriptUtil.copy(bytemanInputJar, new FileOutputStream(bytemanJar));
 
             VirtualMachine vm = VirtualMachine.attach(pid);
             String agentProperties = config.agentProperties();
-            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.containerAgentPort() + (agentProperties != null ? ",prop:" +  agentProperties:""));
+            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.clientAgentPort() + (agentProperties != null ? ",prop:" +  agentProperties:""));
             vm.detach();
         }
         catch (IOException e)

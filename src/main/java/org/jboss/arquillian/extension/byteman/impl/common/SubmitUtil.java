@@ -30,11 +30,11 @@ import org.jboss.byteman.agent.submit.Submit;
  */
 public class SubmitUtil
 {
-    public static void install(String key, String script)
+    public static void install(String key, String script, int port)
     {
         try
         {
-            Submit submit = new Submit();
+            Submit submit = new Submit(Submit.DEFAULT_ADDRESS, port);
             submit.addScripts(Arrays.asList(new ScriptText(key, script)));
         }
         catch (Exception e)
@@ -43,11 +43,11 @@ public class SubmitUtil
         }
     }
 
-    public static void uninstall(String key, String script)
+    public static void uninstall(String key, String script, int port)
     {
         try
         {
-            Submit submit = new Submit();
+            Submit submit = new Submit(Submit.DEFAULT_ADDRESS, port);
             submit.deleteScripts(Arrays.asList(new ScriptText(key, script)));
         }
         catch (Exception e)

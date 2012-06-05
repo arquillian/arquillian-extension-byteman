@@ -18,6 +18,7 @@
 package org.jboss.arquillian.extension.byteman.impl.container;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.ExtractScriptUtil;
 import org.jboss.arquillian.extension.byteman.impl.common.SubmitUtil;
 import org.jboss.arquillian.test.spi.event.suite.After;
@@ -38,37 +39,53 @@ public class RuleInstaller
 
     public void installClass(@Observes BeforeClass event)
     {
+        BytemanConfiguration config = BytemanConfiguration.from(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+        );
+
         String script = ExtractScriptUtil.extract(event);
         if(script != null)
         {
-            SubmitUtil.install(generateKey(CLASS_KEY_PREFIX), script);
+            SubmitUtil.install(generateKey(CLASS_KEY_PREFIX), script, config.containerAgentPort());
         }
     }
 
     public void uninstallClass(@Observes AfterClass event)
     {
+        BytemanConfiguration config = BytemanConfiguration.from(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+        );
+
         String script = ExtractScriptUtil.extract(event);
         if(script != null)
         {
-            SubmitUtil.install(generateKey(CLASS_KEY_PREFIX), script);
+            SubmitUtil.uninstall(generateKey(CLASS_KEY_PREFIX), script, config.containerAgentPort());
         }
     }
 
     public void installMethod(@Observes Before event)
     {
+        BytemanConfiguration config = BytemanConfiguration.from(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+        );
+
         String script = ExtractScriptUtil.extract(event);
         if(script != null)
         {
-            SubmitUtil.install(generateKey(METHOD_KEY_PREFIX), script);
+            SubmitUtil.install(generateKey(METHOD_KEY_PREFIX), script, config.containerAgentPort());
         }
     }
 
     public void uninstallMethod(@Observes After event)
     {
+        BytemanConfiguration config = BytemanConfiguration.from(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+        );
+
         String script = ExtractScriptUtil.extract(event);
         if(script != null)
         {
-            SubmitUtil.uninstall(generateKey(METHOD_KEY_PREFIX), script);
+            SubmitUtil.uninstall(generateKey(METHOD_KEY_PREFIX), script, config.containerAgentPort());
         }
     }
 

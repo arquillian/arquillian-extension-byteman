@@ -42,6 +42,8 @@ public class BytemanConfiguration
     public static String BYTEMAN_EXTENSION_NAME = "byteman";
     public static String BYTEMAN_AUTO_INSTALL_AGENT = "autoInstallAgent";
     public static String BYTEMAN_AGENT_PROPERTIES = "agentProperties";
+    public static String BYTEMAN_CLIENT_AGENT_PORT = "clientAgentPort";
+    public static String BYTEMAN_CONTAINER_AGENT_PORT = "containerAgentPort";
 
 
     private Map<String, String> properties;
@@ -59,6 +61,26 @@ public class BytemanConfiguration
     public String agentProperties()
     {
         return properties.get(BYTEMAN_AGENT_PROPERTIES);
+    }
+
+    public int clientAgentPort()
+    {
+        String value = properties.get(BYTEMAN_CLIENT_AGENT_PORT);
+        if(value == null)
+        {
+            return 9092;
+        }
+        return Integer.parseInt(value);
+    }
+
+    public int containerAgentPort()
+    {
+        String value = properties.get(BYTEMAN_CONTAINER_AGENT_PORT);
+        if(value == null)
+        {
+            return 9091;
+        }
+        return Integer.parseInt(value);
     }
 
     @Override

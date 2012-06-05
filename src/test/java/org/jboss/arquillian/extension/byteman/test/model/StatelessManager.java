@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.extension.byteman.test;
+package org.jboss.arquillian.extension.byteman.test.model;
 
-import javax.ejb.Local;
-import javax.ejb.Stateless;
 
 /**
  * StatelessTestBean
@@ -25,17 +23,9 @@ import javax.ejb.Stateless;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-@Stateless
-@Local(StatelessManager.class)
-public class StatelessManagerBean implements StatelessManager
+public interface StatelessManager
 {
-   public boolean forcedClassLevelFailure()
-   {
-      return false;
-   }
+   boolean forcedClassLevelFailure();
 
-   public boolean forcedMethodLevelFailure()
-   {
-      return false;
-   }
+   boolean forcedMethodLevelFailure();
 }

@@ -15,27 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.extension.byteman.impl;
-
-import org.jboss.arquillian.container.test.spi.client.deployment.AuxiliaryArchiveAppender;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.extension.byteman.impl.client.AgentInstaller;
-import org.jboss.arquillian.extension.byteman.impl.client.DeploymentAppender;
-import org.jboss.arquillian.extension.byteman.impl.client.RuleInstaller;
+package org.jboss.arquillian.extension.byteman.test.model;
 
 /**
- * BytemanExtension
+ * AccountService
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BytemanExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-       builder.observer(AgentInstaller.class)
-              .observer(RuleInstaller.class);
-      builder.service(AuxiliaryArchiveAppender.class, DeploymentAppender.class);
-   }
+public class AccountService {
+
+    public void forcedMethodLevelFailure() {
+        // do nohing, should inject exception
+    }
 }

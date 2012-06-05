@@ -14,18 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jboss.arquillian.extension.byteman.test;
+package org.jboss.arquillian.extension.byteman.test.client;
 
+import org.jboss.arquillian.container.test.api.RunAsClient;
+import org.jboss.arquillian.extension.byteman.api.BMRule;
+import org.jboss.arquillian.extension.byteman.test.model.AccountService;
+import org.jboss.arquillian.junit.Arquillian;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 /**
- * StatelessTestBean
+ * Test Case for {@link BMRule} on Method level Client side
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public interface StatelessManager
-{
-   boolean forcedClassLevelFailure();
+@RunWith(Arquillian.class)
+public class FaultInjectionTestCase {
 
-   boolean forcedMethodLevelFailure();
+    @Test(expected = RuntimeException.class)
+    @BMRule(
+            name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure", 
+            action = "throw new java.lang.RuntimeException()")
+    @RunAsClient
+    public void shouldBeAbleToInjectMethodLevelThrowRule()
+    {
+        new AccountService().forcedMethodLevelFailure();
+    }
 }
