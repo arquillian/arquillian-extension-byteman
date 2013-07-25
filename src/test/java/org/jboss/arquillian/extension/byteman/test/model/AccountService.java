@@ -26,6 +26,6 @@ package org.jboss.arquillian.extension.byteman.test.model;
 public class AccountService {
 
     public void forcedMethodLevelFailure() {
-        // do nohing, should inject exception
+        // do nothing, should inject exception
     }
 }

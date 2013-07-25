@@ -54,6 +54,12 @@ public final class GenerateScriptUtil
               builder.append("\nAT ");
               builder.append(location);
           }
+          String binding = bmRule.binding();
+          if (binding  !=  null && binding.length() > 0) {
+              builder.append("\nBIND ");
+              builder.append(binding);
+          }  
+
           String helper = bmRule.helper();
           if (helper  !=  null && helper.length() > 0) {
               builder.append("\nHELPER ");
