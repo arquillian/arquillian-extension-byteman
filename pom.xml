@@ -40,9 +40,8 @@
         <version.log4j>1.2.14</version.log4j>
         <version.slf4j>1.7.2</version.slf4j>
         <version.byteman>2.2.0.1</version.byteman>
-
         <version.jarjar>1.9</version.jarjar>
-
+        <version.xalan>2.7.1</version.xalan>
         <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
         <!--
         <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar>
@@ -83,6 +82,11 @@
                 <version>${version.spec}</version>
                 <type>pom</type>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>${version.xalan}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
