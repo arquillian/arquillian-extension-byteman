@@ -22,12 +22,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 
+import com.sun.tools.attach.VirtualMachine;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.GenerateScriptUtil;
 import org.jboss.arquillian.test.spi.event.suite.BeforeSuite;
-
-import com.sun.tools.attach.VirtualMachine;
 
 /**
  * AgentInstaller
@@ -37,29 +36,22 @@ import com.sun.tools.attach.VirtualMachine;
  */
 public class AgentInstaller {
 
-    public void install(@Observes(precedence = 1) BeforeSuite event)
-    {
-        try
-        {
+    public void install(@Observes(precedence = 1) BeforeSuite event) {
+        try {
             BytemanConfiguration config = BytemanConfiguration.from(
-                    Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
             );
 
-            if(!config.autoInstallAgent())
-            {
+            if (!config.autoInstallAgent()) {
                 return;
             }
-            try
-            {
+            try {
                 // Not only load it, but also attempt to check firstTime variable, since in embedded containers this might be the same jvm
                 Class<?> mainClass = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.byteman.agent.Main");
-                if(!(Boolean)mainClass.getDeclaredField("firstTime").get(null))
-                {
+                if (!(Boolean) mainClass.getDeclaredField("firstTime").get(null)) {
                     return;
                 }
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 // Agent not loaded yet, move on
             }
 
@@ -80,15 +72,11 @@ public class AgentInstaller {
 
             VirtualMachine vm = VirtualMachine.attach(pid);
             String agentProperties = config.agentProperties();
-            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.containerAgentPort() + (agentProperties != null ? ",prop:" +  agentProperties:""));
+            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.containerAgentPort() + (agentProperties != null ? ",prop:" + agentProperties : ""));
             vm.detach();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException("Could not write byteman.jar to disk", e);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException("Could not install byteman agent", e);
         }
     }

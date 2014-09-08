@@ -34,8 +34,7 @@ import org.jboss.arquillian.config.descriptor.api.ExtensionDef;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BytemanConfiguration
-{
+public class BytemanConfiguration {
     public static String BYTEMAN_JAR = "byteman.jar";
     public static String BYTEMAN_SCRIPT = "byteman.script";
     public static String BYTEMAN_CONFIG = "byteman-arquillian.properties";
@@ -48,81 +47,63 @@ public class BytemanConfiguration
 
     private Map<String, String> properties;
 
-    public BytemanConfiguration(Map<String, String> properties)
-    {
+    public BytemanConfiguration(Map<String, String> properties) {
         this.properties = properties;
     }
 
-    public boolean autoInstallAgent()
-    {
+    public boolean autoInstallAgent() {
         return Boolean.parseBoolean(properties.get(BYTEMAN_AUTO_INSTALL_AGENT));
     }
 
-    public String agentProperties()
-    {
+    public String agentProperties() {
         return properties.get(BYTEMAN_AGENT_PROPERTIES);
     }
 
-    public int clientAgentPort()
-    {
+    public int clientAgentPort() {
         String value = properties.get(BYTEMAN_CLIENT_AGENT_PORT);
-        if(value == null)
-        {
+        if (value == null) {
             return 9092;
         }
         return Integer.parseInt(value);
     }
 
-    public int containerAgentPort()
-    {
+    public int containerAgentPort() {
         String value = properties.get(BYTEMAN_CONTAINER_AGENT_PORT);
-        if(value == null)
-        {
+        if (value == null) {
             return 9091;
         }
         return Integer.parseInt(value);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
-        try
-        {
+        try {
             Properties tmp = new Properties();
             tmp.putAll(properties);
             tmp.store(output, "byteman-auto-added");
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // no-op, what could possible go wrong ? ;)
         }
         return output.toString();
     }
 
-    public static BytemanConfiguration from(ArquillianDescriptor descriptor)
-    {
+    public static BytemanConfiguration from(ArquillianDescriptor descriptor) {
         return new BytemanConfiguration(locateBytemanExtension(descriptor));
     }
 
-    public static BytemanConfiguration from(InputStream inputStream)
-    {
+    public static BytemanConfiguration from(InputStream inputStream) {
         return from(IOUtil.asUTF8String(inputStream));
     }
 
-    public static BytemanConfiguration from(String properties)
-    {
+    public static BytemanConfiguration from(String properties) {
         return new BytemanConfiguration(loadPropertiesString(properties));
     }
 
-    private static Map<String, String> locateBytemanExtension(ArquillianDescriptor descriptor)
-    {
-        if(descriptor != null)
-        {
-            for(ExtensionDef extension : descriptor.getExtensions())
-            {
-                if(BYTEMAN_EXTENSION_NAME.equalsIgnoreCase(extension.getExtensionName()))
-                {
+    private static Map<String, String> locateBytemanExtension(ArquillianDescriptor descriptor) {
+        if (descriptor != null) {
+            for (ExtensionDef extension : descriptor.getExtensions()) {
+                if (BYTEMAN_EXTENSION_NAME.equalsIgnoreCase(extension.getExtensionName())) {
                     return extension.getExtensionProperties();
                 }
             }
@@ -130,21 +111,16 @@ public class BytemanConfiguration
         return new HashMap<String, String>();
     }
 
-    private static Map<String, String> loadPropertiesString(String properties)
-    {
+    private static Map<String, String> loadPropertiesString(String properties) {
         Map<String, String> result = new HashMap<String, String>();
 
         Properties props = new Properties();
-        try
-        {
+        try {
             props.load(new StringReader(properties));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // no-op, no IOException in StringReader
         }
-        for(Map.Entry<Object, Object> entry : props.entrySet())
-        {
+        for (Map.Entry<Object, Object> entry : props.entrySet()) {
             result.put(String.valueOf(entry.getKey()), String.valueOf(entry.getValue()));
         }
         return result;

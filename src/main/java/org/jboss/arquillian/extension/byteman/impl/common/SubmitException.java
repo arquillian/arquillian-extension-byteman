@@ -22,12 +22,10 @@ package org.jboss.arquillian.extension.byteman.impl.common;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SubmitException extends RuntimeException
-{
-   private static final long serialVersionUID = 1L;
+public class SubmitException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-   public SubmitException(String message, Throwable cause)
-   {
-      super(message, cause);
-   }
+    public SubmitException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

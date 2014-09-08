@@ -10,16 +10,26 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})
-public @interface BMRule
-{
+public @interface BMRule {
     String name();
+
     boolean isInterface() default false;
+
     boolean isOverriding() default false;
+
     String targetClass();
+
     String targetMethod();
+
     String targetLocation() default "";
+
     String helper() default "";
+
     String binding() default "";
+
     String condition() default "TRUE";
+
     String action() default "NOTHING";
+
+    ExecType exec() default ExecType.ALL;
 }

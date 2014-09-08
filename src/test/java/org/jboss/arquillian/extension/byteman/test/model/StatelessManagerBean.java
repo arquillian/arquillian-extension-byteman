@@ -27,15 +27,12 @@ import javax.ejb.Stateless;
  */
 @Stateless
 @Local(StatelessManager.class)
-public class StatelessManagerBean implements StatelessManager
-{
-   public boolean forcedClassLevelFailure()
-   {
-      return false;
-   }
+public class StatelessManagerBean implements StatelessManager {
+    public boolean forcedClassLevelFailure() {
+        return false;
+    }
 
-   public boolean forcedMethodLevelFailure()
-   {
-      return false;
-   }
+    public boolean forcedMethodLevelFailure() {
+        return false;
+    }
 }

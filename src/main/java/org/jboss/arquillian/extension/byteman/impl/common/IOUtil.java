@@ -29,78 +29,65 @@ import java.util.logging.Logger;
  * @author <a href="mailto:andrew.rubinger@jboss.org">ALR</a>
  * @version $Revision: $
  */
-public final class IOUtil
-{
+public final class IOUtil {
 
-   // -------------------------------------------------------------------------------------||
-   // Class Members ----------------------------------------------------------------------||
-   // -------------------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
+    // Class Members ----------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
 
-   /**
-    * Logger
-    */
-   private static final Logger log = Logger.getLogger(IOUtil.class.getName());
+    /**
+     * Logger
+     */
+    private static final Logger log = Logger.getLogger(IOUtil.class.getName());
 
-   /**
-    * Name of UTF-8 Charset
-    */
-   private static final String CHARSET_UTF8 = "UTF-8";
+    /**
+     * Name of UTF-8 Charset
+     */
+    private static final String CHARSET_UTF8 = "UTF-8";
 
-   // -------------------------------------------------------------------------------------||
-   // Constructor ------------------------------------------------------------------------||
-   // -------------------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
+    // Constructor ------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
 
-   /**
-    * Internal constructor; should not be called
-    */
-   private IOUtil()
-   {
-      throw new UnsupportedOperationException("No instances should be created; stateless class");
-   }
+    /**
+     * Internal constructor; should not be called
+     */
+    private IOUtil() {
+        throw new UnsupportedOperationException("No instances should be created; stateless class");
+    }
 
-   // -------------------------------------------------------------------------------------||
-   // Required Implementations -----------------------------------------------------------||
-   // -------------------------------------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
+    // Required Implementations -----------------------------------------------------------||
+    // -------------------------------------------------------------------------------------||
 
-   /**
-    * Obtains the contents of the specified stream
-    * as a String in UTF-8 charset.
-    *
-    * @param in
-    * @throws IllegalArgumentException If the stream was not specified
-    */
-   public static String asUTF8String(InputStream in)
-   {
-      StringBuilder buffer = new StringBuilder();
-      String line;
+    /**
+     * Obtains the contents of the specified stream
+     * as a String in UTF-8 charset.
+     *
+     * @param in
+     * @throws IllegalArgumentException If the stream was not specified
+     */
+    public static String asUTF8String(InputStream in) {
+        StringBuilder buffer = new StringBuilder();
+        String line;
 
-      try
-      {
-         BufferedReader reader = new BufferedReader(new InputStreamReader(in, CHARSET_UTF8));
-         while ((line = reader.readLine()) != null)
-         {
-            buffer.append(line).append('\n');
-         }
-      }
-      catch (IOException ioe)
-      {
-         throw new RuntimeException("Error in obtaining string from " + in, ioe);
-      }
-      finally
-      {
-         try
-         {
-            in.close();
-         }
-         catch (IOException ignore)
-         {
-            if (log.isLoggable(Level.FINER))
-            {
-               log.finer("Could not close stream due to: " + ignore.getMessage() + "; ignoring");
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in, CHARSET_UTF8));
+            while ((line = reader.readLine()) != null) {
+                buffer.append(line).append('\n');
             }
-         }
-      }
+        } catch (IOException ioe) {
+            throw new RuntimeException("Error in obtaining string from " + in, ioe);
+        } finally {
+            try {
+                in.close();
+            } catch (IOException ignore) {
+                if (log.isLoggable(Level.FINER)) {
+                    log.finer("Could not close stream due to: " + ignore.getMessage() + "; ignoring");
+                }
+            }
+        }
 
-      return buffer.toString();
-   }
+        return buffer.toString();
+    }
 }

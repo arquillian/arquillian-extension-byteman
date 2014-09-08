@@ -35,62 +35,48 @@ import org.jboss.byteman.agent.submit.Submit;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class ScriptInstaller
-{
-   public void install(@Observes BeforeSuite event)
-   {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStream scriptStream = cl.getResourceAsStream(BytemanConfiguration.BYTEMAN_SCRIPT);
+public class ScriptInstaller {
+    public void install(@Observes BeforeSuite event) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        InputStream scriptStream = cl.getResourceAsStream(BytemanConfiguration.BYTEMAN_SCRIPT);
 
-      try
-      {
-         if(scriptStream != null && scriptStream.available() > 0)
-         {
-            BytemanConfiguration config = BytemanConfiguration.from(
+        try {
+            if (scriptStream != null && scriptStream.available() > 0) {
+                BytemanConfiguration config = BytemanConfiguration.from(
                     Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+                );
+                String ruleKey = Thread.currentThread().getName();
+                String ruleScript = GenerateScriptUtil.toString(scriptStream);
+                try {
+                    Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
+                    submit.addScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
+                } catch (Exception e) {
+                    throw new SubmitException("Could not install script from file", e);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Could not check stream", e);
+        }
+    }
+
+    public void uninstall(@Observes AfterSuite event) {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        InputStream scriptStream = cl.getResourceAsStream(BytemanConfiguration.BYTEMAN_SCRIPT);
+
+        if (scriptStream != null) {
+            BytemanConfiguration config = BytemanConfiguration.from(
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
             );
+
             String ruleKey = Thread.currentThread().getName();
             String ruleScript = GenerateScriptUtil.toString(scriptStream);
-            try
-            {
-               Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
-               submit.addScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
+            try {
+                Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
+                submit.deleteScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
+            } catch (Exception e) {
+                throw new SubmitException("Could not uninstall script from file", e);
             }
-            catch (Exception e)
-            {
-               throw new SubmitException("Could not install script from file", e);
-            }
-         }
-      }
-      catch (IOException e)
-      {
-         throw new RuntimeException("Could not check stream", e);
-      }
-   }
-
-   public void uninstall(@Observes AfterSuite event)
-   {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStream scriptStream = cl.getResourceAsStream(BytemanConfiguration.BYTEMAN_SCRIPT);
-
-      if(scriptStream != null)
-      {
-         BytemanConfiguration config = BytemanConfiguration.from(
-                 Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
-         );
-
-         String ruleKey = Thread.currentThread().getName();
-         String ruleScript = GenerateScriptUtil.toString(scriptStream);
-         try
-         {
-             Submit submit = new Submit(Submit.DEFAULT_ADDRESS, config.containerAgentPort());
-            submit.deleteScripts(Arrays.asList(new ScriptText(ruleKey, ruleScript)));
-         }
-         catch (Exception e)
-         {
-            throw new SubmitException("Could not uninstall script from file", e);
-         }
-      }
-   }
+        }
+    }
 }
 

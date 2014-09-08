@@ -23,6 +23,7 @@ import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.extension.byteman.api.BMRules;
+import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.BytemanRemoteExtension;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.GenerateScriptUtil;
@@ -42,8 +43,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class DeploymentAppender implements AuxiliaryArchiveAppender
-{
+public class DeploymentAppender implements AuxiliaryArchiveAppender {
     @Inject
     private Instance<ArquillianDescriptor> descriptorInst;
 
@@ -52,27 +52,26 @@ public class DeploymentAppender implements AuxiliaryArchiveAppender
         BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
 
         JavaArchive jar = ShrinkWrap.create(JavaArchive.class, "arquillian-byteman.jar")
-                .addClasses(Submit.class, ScriptText.class, BMRule.class, BMRules.class,
-                            BytemanRemoteExtension.class, GenerateScriptUtil.class, SubmitException.class, BytemanConfiguration.class)
-                .addPackages(false,
-                        org.jboss.arquillian.extension.byteman.impl.container.ScriptInstaller.class.getPackage(),
-                        org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration.class.getPackage())
-                .addAsServiceProvider(RemoteLoadableExtension.class, BytemanRemoteExtension.class);
+            .addClasses(Submit.class, ScriptText.class, BMRule.class, BMRules.class, ExecType.class,
+                BytemanRemoteExtension.class, GenerateScriptUtil.class, SubmitException.class, BytemanConfiguration.class)
+            .addPackages(false,
+                org.jboss.arquillian.extension.byteman.impl.container.ScriptInstaller.class.getPackage(),
+                org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration.class.getPackage())
+            .addAsServiceProvider(RemoteLoadableExtension.class, BytemanRemoteExtension.class);
 
         jar.addAsResource(new StringAsset(config.toString()), BytemanConfiguration.BYTEMAN_CONFIG);
 
-        if(config.autoInstallAgent())
-        {
+        if (config.autoInstallAgent()) {
             JavaArchive agentJar = ShrinkWrap.create(JavaArchive.class)
-                    .addPackages(true, "org.jboss.byteman")
-                    .setManifest(
-                            new StringAsset("Manifest-Version: 1.0\n"
-                                    + "Created-By: Arquillian\n"
-                                    + "Implementation-Version: 0.0.0.Arq\n"
-                                    + "Premain-Class: org.jboss.byteman.agent.Main\n"
-                                    + "Agent-Class: org.jboss.byteman.agent.Main\n"
-                                    + "Can-Redefine-Classes: true\n"
-                                    + "Can-Retransform-Classes: true\n"));
+                .addPackages(true, "org.jboss.byteman")
+                .setManifest(
+                    new StringAsset("Manifest-Version: 1.0\n"
+                        + "Created-By: Arquillian\n"
+                        + "Implementation-Version: 0.0.0.Arq\n"
+                        + "Premain-Class: org.jboss.byteman.agent.Main\n"
+                        + "Agent-Class: org.jboss.byteman.agent.Main\n"
+                        + "Can-Redefine-Classes: true\n"
+                        + "Can-Retransform-Classes: true\n"));
 
             // add byteman archive as a resource in the jar, needed to install
             jar.add(new ArchiveAsset(agentJar, ZipExporter.class), BytemanConfiguration.BYTEMAN_JAR);

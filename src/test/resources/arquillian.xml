@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <arquillian xmlns="http://jboss.org/schema/arquillian"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://jboss.org/schema/arquillian http://jboss.org/schema/arquillian/arquillian_1_0.xsd">
 
     <!-- Uncomment to have test archives exported to the file system for inspection -->
     <!--
@@ -10,19 +10,21 @@
     </engine>
     -->
 
-  <container qualifier="dev" default="true">
-    <configuration>
-      <property name="jbossHome">target/jboss-as-${jboss.version:7.1.1.Final}</property>
+    <container qualifier="dev" default="true">
+        <configuration>
+            <property name="jbossHome">target/jboss-as-${jboss.version:7.1.1.Final}</property>
             <!-- -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y  -->
             <!-- <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:/usr/lib/jvm/java-6-openjdk/lib/tools.jar</property> -->
 
-      <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:${path.tools_jar}</property>
-    </configuration>
-  </container>
+            <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman
+                -Xbootclasspath/a:${path.tools_jar}
+            </property>
+        </configuration>
+    </container>
 
 
-  <extension qualifier="byteman">
-    <property name="autoInstallAgent">true</property>
-    <property name="agentProperties">org.jboss.byteman.verbose=true</property>
-  </extension>
+    <extension qualifier="byteman">
+        <property name="autoInstallAgent">true</property>
+        <property name="agentProperties">org.jboss.byteman.verbose=true</property>
+    </extension>
 </arquillian>

@@ -29,13 +29,11 @@ import org.jboss.arquillian.extension.byteman.impl.client.RuleInstaller;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BytemanExtension implements LoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-       builder.observer(AgentInstaller.class)
-              .observer(RuleInstaller.class);
-      builder.service(AuxiliaryArchiveAppender.class, DeploymentAppender.class);
-   }
+public class BytemanExtension implements LoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.observer(AgentInstaller.class)
+            .observer(RuleInstaller.class);
+        builder.service(AuxiliaryArchiveAppender.class, DeploymentAppender.class);
+    }
 }

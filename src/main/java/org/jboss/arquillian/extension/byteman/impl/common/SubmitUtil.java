@@ -28,30 +28,21 @@ import org.jboss.byteman.agent.submit.Submit;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SubmitUtil
-{
-    public static void install(String key, String script, int port)
-    {
-        try
-        {
-            Submit submit = new Submit(Submit.DEFAULT_ADDRESS, port);
+public class SubmitUtil {
+    public static void install(String key, String script, ExecContext context) {
+        try {
+            Submit submit = new Submit(context.getAddress(), context.getPort());
             submit.addScripts(Arrays.asList(new ScriptText(key, script)));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new SubmitException("Could not uninstall script from file", e);
         }
     }
 
-    public static void uninstall(String key, String script, int port)
-    {
-        try
-        {
-            Submit submit = new Submit(Submit.DEFAULT_ADDRESS, port);
+    public static void uninstall(String key, String script, ExecContext context) {
+        try {
+            Submit submit = new Submit(context.getAddress(), context.getPort());
             submit.deleteScripts(Arrays.asList(new ScriptText(key, script)));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new SubmitException("Could not uninstall script from file", e);
         }
     }
