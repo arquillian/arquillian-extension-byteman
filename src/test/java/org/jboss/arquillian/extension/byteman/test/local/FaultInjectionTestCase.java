@@ -30,7 +30,7 @@ import org.junit.runner.RunWith;
 
 /**
  * Test Case for {@link BMRule} on Method level Local protocol
- * 
+ * <p/>
  * Requires containers that use Local protocol, Weld | OpenEJB | IronJacamar | OpenWebBeans
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
@@ -42,19 +42,18 @@ public class FaultInjectionTestCase {
     @Deployment
     public static JavaArchive deploy() {
         return ShrinkWrap.create(JavaArchive.class)
-                .addClass(AccountService.class)
-                .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClass(AccountService.class)
+            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @Inject
     private AccountService accountService;
-    
+
     @Test(expected = RuntimeException.class)
     @BMRule(
-            name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure", 
-            action = "throw new java.lang.RuntimeException()")
-    public void shouldBeAbleToInjectMethodLevelThrowRule()
-    {
+        name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure",
+        action = "throw new java.lang.RuntimeException()")
+    public void shouldBeAbleToInjectMethodLevelThrowRule() {
         accountService.forcedMethodLevelFailure();
     }
 }

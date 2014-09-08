@@ -34,11 +34,10 @@ public class FaultInjectionTestCase {
 
     @Test(expected = RuntimeException.class)
     @BMRule(
-            name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure", 
-            action = "throw new java.lang.RuntimeException()")
+        name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure",
+        action = "throw new java.lang.RuntimeException()")
     @RunAsClient
-    public void shouldBeAbleToInjectMethodLevelThrowRule()
-    {
+    public void shouldBeAbleToInjectMethodLevelThrowRule() {
         new AccountService().forcedMethodLevelFailure();
     }
 }

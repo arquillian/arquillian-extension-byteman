@@ -42,16 +42,17 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @BMRules(
-        @BMRule(
-                name = "Throw exception on success class", targetClass = "StatelessManagerBean", targetMethod = "forcedClassLevelFailure",
-                action = "throw new java.lang.RuntimeException()")
+    @BMRule(
+        name = "Throw exception on success class", targetClass = "StatelessManagerBean", targetMethod = "forcedClassLevelFailure",
+        action = "throw new java.lang.RuntimeException()")
 )
 public class ContainerFaultInjectionTestCase {
 
-    @Deployment @OverProtocol("Servlet 3.0")
+    @Deployment
+    @OverProtocol("Servlet 3.0")
     public static Archive<?> createDeployment() {
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(StatelessManager.class, StatelessManagerBean.class);
+            .addClasses(StatelessManager.class, StatelessManagerBean.class);
     }
 
     @EJB(mappedName = "java:module/StatelessManagerBean")
@@ -59,25 +60,21 @@ public class ContainerFaultInjectionTestCase {
 
     @Test(expected = EJBException.class)
     @BMRule(
-            name = "Throw exception on success method", targetClass = "StatelessManagerBean", targetMethod = "forcedMethodLevelFailure",
-            action = "throw new java.lang.RuntimeException()")
-    public void shouldBeAbleToInjectMethodLevelThrowRule()
-    {
+        name = "Throw exception on success method", targetClass = "StatelessManagerBean", targetMethod = "forcedMethodLevelFailure",
+        action = "throw new java.lang.RuntimeException()")
+    public void shouldBeAbleToInjectMethodLevelThrowRule() {
         Assert.assertNotNull("Verify bean was injected", bean);
         bean.forcedMethodLevelFailure();
     }
 
-    @Test(expected = EJBException.class) @InSequence(2)
-    public void shouldBeAbleToInjectClassLevelThrowRule()
-    {
+    @Test(expected = EJBException.class)
+    @InSequence(2)
+    public void shouldBeAbleToInjectClassLevelThrowRule() {
         Assert.assertNotNull("Verify bean was injected", bean);
 
-        try
-        {
+        try {
             bean.forcedMethodLevelFailure();
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             Assert.fail("No method level rule should be active");
         }
 

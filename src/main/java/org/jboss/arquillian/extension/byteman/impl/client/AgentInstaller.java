@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 
+import com.sun.tools.attach.VirtualMachine;
 import org.jboss.arquillian.config.descriptor.api.ArquillianDescriptor;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
@@ -34,40 +35,30 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-import com.sun.tools.attach.VirtualMachine;
-
 /**
  * AgentInstaller
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class AgentInstaller 
-{
+public class AgentInstaller {
     @Inject
     private Instance<ArquillianDescriptor> descriptorInst;
 
-    public void install(@Observes(precedence = 1) BeforeSuite event)
-    {
-        try
-        {
+    public void install(@Observes(precedence = 1) BeforeSuite event) {
+        try {
             BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
 
-            if(!config.autoInstallAgent())
-            {
+            if (!config.autoInstallAgent()) {
                 return;
             }
-            try
-            {
+            try {
                 // Not only load it, but also attempt to check firstTime variable, since in embedded containers this might be the same jvm
                 Class<?> mainClass = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.byteman.agent.Main");
-                if(!(Boolean)mainClass.getDeclaredField("firstTime").get(null))
-                {
+                if (!(Boolean) mainClass.getDeclaredField("firstTime").get(null)) {
                     return;
                 }
-            }
-            catch (ClassNotFoundException e)
-            {
+            } catch (ClassNotFoundException e) {
                 // Agent not loaded yet, move on
             }
 
@@ -81,15 +72,15 @@ public class AgentInstaller
             bytemanLib.mkdirs();
 
             InputStream bytemanInputJar = ShrinkWrap.create(JavaArchive.class)
-                    .addPackages(true, "org.jboss.byteman")
-                    .setManifest(
-                            new StringAsset("Manifest-Version: 1.0\n"
-                                    + "Created-By: Arquillian\n"
-                                    + "Implementation-Version: 0.0.0.Arq\n"
-                                    + "Premain-Class: org.jboss.byteman.agent.Main\n"
-                                    + "Agent-Class: org.jboss.byteman.agent.Main\n"
-                                    + "Can-Redefine-Classes: true\n"
-                                    + "Can-Retransform-Classes: true\n")).as(ZipExporter.class).exportAsInputStream();
+                .addPackages(true, "org.jboss.byteman")
+                .setManifest(
+                    new StringAsset("Manifest-Version: 1.0\n"
+                        + "Created-By: Arquillian\n"
+                        + "Implementation-Version: 0.0.0.Arq\n"
+                        + "Premain-Class: org.jboss.byteman.agent.Main\n"
+                        + "Agent-Class: org.jboss.byteman.agent.Main\n"
+                        + "Can-Redefine-Classes: true\n"
+                        + "Can-Retransform-Classes: true\n")).as(ZipExporter.class).exportAsInputStream();
 
 
             File bytemanJar = new File(bytemanLib, BytemanConfiguration.BYTEMAN_JAR);
@@ -97,15 +88,11 @@ public class AgentInstaller
 
             VirtualMachine vm = VirtualMachine.attach(pid);
             String agentProperties = config.agentProperties();
-            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.clientAgentPort() + (agentProperties != null ? ",prop:" +  agentProperties:""));
+            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.clientAgentPort() + (agentProperties != null ? ",prop:" + agentProperties : ""));
             vm.detach();
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             throw new RuntimeException("Could not write byteman.jar to disk", e);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             throw new RuntimeException("Could not install byteman agent", e);
         }
     }
