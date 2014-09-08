@@ -28,7 +28,7 @@
     <!-- Properties -->
     <properties>
         <!-- Versioning -->
-        <version.arquillian_core>1.1.0.Final</version.arquillian_core>
+        <version.arquillian_core>1.1.5.Final</version.arquillian_core>
         <version.arquillian_glassfish>1.0.0.CR4</version.arquillian_glassfish>
         <version.arquillian_weld>1.0.0.CR7</version.arquillian_weld>
         <version.weld>1.1.13.Final</version.weld>
@@ -38,7 +38,7 @@
         <!-- log4j and slf4j are required for Weld Container -->
         <version.log4j>1.2.14</version.log4j>
         <version.slf4j>1.7.2</version.slf4j>
-        <version.byteman>2.1.3</version.byteman>
+        <version.byteman>2.2.0.1</version.byteman>
 
         <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
         <!--

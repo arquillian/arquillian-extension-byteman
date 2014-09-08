@@ -22,4 +22,5 @@ public @interface BMRule
     String binding() default "";
     String condition() default "TRUE";
     String action() default "NOTHING";
+    ExecType exec() default ExecType.ALL;
 }
