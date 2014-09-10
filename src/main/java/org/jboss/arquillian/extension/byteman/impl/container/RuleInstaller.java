@@ -19,11 +19,12 @@ package org.jboss.arquillian.extension.byteman.impl.container;
 
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Map;
+import java.util.List;
 
 import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
+import org.jboss.arquillian.extension.byteman.impl.common.ExecContext;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
@@ -40,8 +41,8 @@ public class RuleInstaller extends AbstractRuleInstaller {
         );
     }
 
-    protected Map<Integer, EnumSet<ExecType>> getExecMap() {
-        return Collections.singletonMap(getConfiguration().containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER));
+    protected List<ExecContext> getExecContexts() {
+        return Collections.singletonList(new ExecContext(getConfiguration().containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER)));
     }
 
     protected boolean shouldRun(TestEvent event) {
