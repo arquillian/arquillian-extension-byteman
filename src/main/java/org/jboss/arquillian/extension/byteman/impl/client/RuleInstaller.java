@@ -51,19 +51,20 @@ public class RuleInstaller extends AbstractRuleInstaller {
     private Instance<Deployment> deploymentInstance;
 
     @Inject
-    private Instance<ProtocolMetaData> protocolMetaDataInstance;
-
-    @Inject
     private Instance<Container> containerInstance;
 
     @Inject
     private Instance<ArquillianDescriptor> descriptorInst;
 
+    @Inject
+    private Instance<ProtocolMetaData> protocolMetaDataInstance;
+
     @SuppressWarnings("deprecation")
     protected String readAddress() {
-        ProtocolMetaData pmd = null; // TODO
+        ProtocolMetaData pmd = protocolMetaDataInstance.get();
 
         if (pmd == null) {
+            // TODO -- bug in ARQ?
             return null;
         }
 

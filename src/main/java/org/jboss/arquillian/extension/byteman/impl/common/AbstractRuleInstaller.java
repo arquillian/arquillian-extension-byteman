@@ -44,14 +44,14 @@ public abstract class AbstractRuleInstaller {
         }
     }
 
-    public void installClass(@Observes(precedence = Integer.MAX_VALUE) BeforeClass event) {
+    public void installClass(@Observes BeforeClass event) {
         for (ExecContext context : getExecContexts()) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             install(CLASS_KEY_PREFIX, script, context);
         }
     }
 
-    public void uninstallClass(@Observes(precedence = Integer.MIN_VALUE) AfterClass event) {
+    public void uninstallClass(@Observes AfterClass event) {
         for (ExecContext context : getExecContexts()) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             uninstall(generateKey(CLASS_KEY_PREFIX), script, context);
