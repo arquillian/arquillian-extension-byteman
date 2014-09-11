@@ -12,7 +12,7 @@
 
     <container qualifier="dev" default="true">
         <configuration>
-            <property name="jbossHome">target/jboss-as-${jboss.version:7.1.1.Final}</property>
+            <property name="jbossHome">target/wildfly-${jboss.version:8.1.0.Final}</property>
             <!-- -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y  -->
             <!-- <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:/usr/lib/jvm/java-6-openjdk/lib/tools.jar</property> -->
 
