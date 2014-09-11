@@ -27,4 +27,6 @@ public interface StatelessManager {
     boolean forcedClassLevelFailure();
 
     boolean forcedMethodLevelFailure();
+
+    boolean bindingCountdownFailure();
 }

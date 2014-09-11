@@ -35,4 +35,8 @@ public class StatelessManagerBean implements StatelessManager {
     public boolean forcedMethodLevelFailure() {
         return false;
     }
+
+    public boolean bindingCountdownFailure() {
+        return false;
+    }
 }
