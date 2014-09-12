@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
+import org.jboss.arquillian.extension.byteman.impl.client.AddressProvider;
 import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.jboss.byteman.agent.submit.Submit;
@@ -47,7 +48,7 @@ public class ExecContext {
 
     @SuppressWarnings("UnusedParameters")
     public void validate(ClassLifecycleEvent event) {
-        if (matched.contains(ExecType.CLIENT_CONTAINER)) {
+        if (matched.contains(ExecType.CLIENT_CONTAINER) && (AddressProvider.provideAddress(event) == null)) {
             log.warning(String.format("Can only handle %s container agent address; no %s available.", Submit.DEFAULT_ADDRESS, ProtocolMetaData.class.getSimpleName()));
         }
     }
