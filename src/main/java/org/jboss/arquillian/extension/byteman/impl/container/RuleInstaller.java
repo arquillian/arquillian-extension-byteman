@@ -17,80 +17,37 @@
  */
 package org.jboss.arquillian.extension.byteman.impl.container;
 
-import org.jboss.arquillian.core.api.annotation.Observes;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+
+import org.jboss.arquillian.core.spi.event.Event;
+import org.jboss.arquillian.extension.byteman.api.ExecType;
+import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
-import org.jboss.arquillian.extension.byteman.impl.common.ExtractScriptUtil;
-import org.jboss.arquillian.extension.byteman.impl.common.SubmitUtil;
-import org.jboss.arquillian.test.spi.event.suite.After;
-import org.jboss.arquillian.test.spi.event.suite.AfterClass;
-import org.jboss.arquillian.test.spi.event.suite.Before;
-import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
+import org.jboss.arquillian.extension.byteman.impl.common.ExecContext;
+import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
  * MethodRuleInstaller
  *
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
+ * @author <a href="mailto:ales.justin@jboss.org">Ales Justin</a>
  * @version $Revision: $
  */
-public class RuleInstaller
-{
-    public static final String CLASS_KEY_PREFIX = "Class:";
-    public static final String METHOD_KEY_PREFIX = "Method:";
-
-    public void installClass(@Observes BeforeClass event)
-    {
-        BytemanConfiguration config = BytemanConfiguration.from(
-                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+public class RuleInstaller extends AbstractRuleInstaller {
+    private static BytemanConfiguration getConfiguration() {
+        return BytemanConfiguration.from(
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
         );
-
-        String script = ExtractScriptUtil.extract(event);
-        if(script != null)
-        {
-            SubmitUtil.install(generateKey(CLASS_KEY_PREFIX), script, config.containerAgentPort());
-        }
     }
 
-    public void uninstallClass(@Observes AfterClass event)
-    {
-        BytemanConfiguration config = BytemanConfiguration.from(
-                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
-        );
-
-        String script = ExtractScriptUtil.extract(event);
-        if(script != null)
-        {
-            SubmitUtil.uninstall(generateKey(CLASS_KEY_PREFIX), script, config.containerAgentPort());
-        }
+    protected List<ExecContext> getExecContexts(Event event) {
+        BytemanConfiguration configuration = getConfiguration();
+        return Collections.singletonList(new ExecContext(configuration.containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER), configuration));
     }
 
-    public void installMethod(@Observes Before event)
-    {
-        BytemanConfiguration config = BytemanConfiguration.from(
-                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
-        );
-
-        String script = ExtractScriptUtil.extract(event);
-        if(script != null)
-        {
-            SubmitUtil.install(generateKey(METHOD_KEY_PREFIX), script, config.containerAgentPort());
-        }
-    }
-
-    public void uninstallMethod(@Observes After event)
-    {
-        BytemanConfiguration config = BytemanConfiguration.from(
-                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
-        );
-
-        String script = ExtractScriptUtil.extract(event);
-        if(script != null)
-        {
-            SubmitUtil.uninstall(generateKey(METHOD_KEY_PREFIX), script, config.containerAgentPort());
-        }
-    }
-
-    private String generateKey(String prefix)
-    {
-        return prefix + Thread.currentThread().getName();
+    protected boolean shouldRun(TestEvent event) {
+        return true;
     }
 }

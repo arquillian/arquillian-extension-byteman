@@ -28,13 +28,11 @@ import org.jboss.arquillian.extension.byteman.impl.container.ScriptInstaller;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class BytemanRemoteExtension implements RemoteLoadableExtension
-{
-   @Override
-   public void register(ExtensionBuilder builder)
-   {
-      builder.observer(AgentInstaller.class)
-             .observer(ScriptInstaller.class)
-             .observer(RuleInstaller.class);
-   }
+public class BytemanRemoteExtension implements RemoteLoadableExtension {
+    @Override
+    public void register(ExtensionBuilder builder) {
+        builder.observer(AgentInstaller.class)
+            .observer(ScriptInstaller.class)
+            .observer(RuleInstaller.class);
+    }
 }

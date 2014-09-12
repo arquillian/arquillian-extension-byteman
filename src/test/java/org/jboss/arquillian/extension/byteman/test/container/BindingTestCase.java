@@ -41,8 +41,8 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @BMRules({
-        @BMRule(name = "Create counter for StatelessManager", targetClass = "StatelessManagerBean", targetMethod = "<init>", binding = "bean = $this", action = "createCountDown(bean,1)"),
-        @BMRule(name = "Fail on second call", targetClass = "StatelessManagerBean", targetMethod = "forcedClassLevelFailure", binding = "bean = $this", condition = "countDown(bean)", action = "throw new RuntimeException(\"Second call throws exception\")") })
+    @BMRule(name = "Create counter for StatelessManager", targetClass = "StatelessManagerBean", targetMethod = "<init>", action = "createCountDown(\"smb\",1)"),
+    @BMRule(name = "Fail on second call", targetClass = "StatelessManagerBean", targetMethod = "bindingCountdownFailure", condition = "countDown(\"smb\")", action = "throw new RuntimeException(\"Second call throws exception\")")})
 public class BindingTestCase {
 
     @Deployment
@@ -57,12 +57,12 @@ public class BindingTestCase {
     @Test
     @InSequence(1)
     public void shouldNotFailForFirstInvocation() {
-        bean.forcedClassLevelFailure();
+        bean.bindingCountdownFailure();
     }
 
     @Test(expected = EJBException.class)
     @InSequence(2)
     public void shouldFailForSecondInvocation() throws Throwable {
-        bean.forcedClassLevelFailure();
+        bean.bindingCountdownFailure();
     }
 }
