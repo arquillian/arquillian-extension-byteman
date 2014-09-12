@@ -1,9 +1,14 @@
 package org.jboss.arquillian.extension.byteman.impl.common;
 
 import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
+import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
+import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
+import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 import org.jboss.byteman.agent.submit.Submit;
 
 /**
@@ -18,6 +23,8 @@ public class ExecContext {
 
     private final BytemanConfiguration configuration;
 
+    private final Set<ExecType> matched = new HashSet<>();
+
     public ExecContext(int port, EnumSet<ExecType> exec, BytemanConfiguration configuration) {
         this(Submit.DEFAULT_ADDRESS, port, exec, configuration);
     }
@@ -27,6 +34,26 @@ public class ExecContext {
         this.port = port;
         this.exec = exec;
         this.configuration = configuration;
+    }
+
+    public boolean match(ExecType execType) {
+        if (getExec().contains(execType)) {
+            matched.add(execType);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public void validate(ClassLifecycleEvent event) {
+        if (matched.contains(ExecType.CLIENT_CONTAINER)) {
+            log.warning(String.format("Can only handle %s container agent address; no %s available.", Submit.DEFAULT_ADDRESS, ProtocolMetaData.class.getSimpleName()));
+        }
+    }
+
+    @SuppressWarnings("UnusedParameters")
+    public void validate(TestLifecycleEvent event) {
     }
 
     public void validate(ExecType execType) {

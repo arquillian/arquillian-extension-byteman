@@ -18,7 +18,6 @@
 package org.jboss.arquillian.extension.byteman.impl.common;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import org.jboss.arquillian.extension.byteman.api.BMRule;
@@ -39,14 +38,18 @@ public final class ExtractScriptUtil {
         BMRule rule = event.getTestClass().getAnnotation(BMRule.class);
         BMRules rules = event.getTestClass().getAnnotation(BMRules.class);
 
-        return createRules(context, rule, rules);
+        String script = createRules(context, rule, rules);
+        context.validate(event);
+        return script;
     }
 
     public static String extract(ExecContext context, TestLifecycleEvent event) {
         BMRule rule = event.getTestMethod().getAnnotation(BMRule.class);
         BMRules rules = event.getTestMethod().getAnnotation(BMRules.class);
 
-        return createRules(context, rule, rules);
+        String script = createRules(context, rule, rules);
+        context.validate(event);
+        return script;
     }
 
     private static String createRules(ExecContext context, BMRule rule, BMRules rules) {
@@ -60,7 +63,7 @@ public final class ExtractScriptUtil {
     }
 
     private static List<BMRule> toRuleList(ExecContext context, BMRule rule, BMRules rules) {
-        List<BMRule> bmRules = new ArrayList<BMRule>();
+        List<BMRule> bmRules = new ArrayList<>();
         if (rule != null) {
             checkRule(context, bmRules, rule);
         } else {
@@ -72,10 +75,8 @@ public final class ExtractScriptUtil {
     }
 
     private static void checkRule(ExecContext context, List<BMRule> bmRules, BMRule rule) {
-        EnumSet<ExecType> match = context.getExec();
         ExecType type = rule.exec();
-
-        if (match.contains(type)) {
+        if (context.match(type)) {
             context.validate(type);
             bmRules.add(rule);
         }
