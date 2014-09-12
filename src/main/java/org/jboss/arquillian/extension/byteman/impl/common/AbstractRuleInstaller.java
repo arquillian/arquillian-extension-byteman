@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.arquillian.core.api.annotation.Observes;
+import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.test.spi.event.suite.After;
 import org.jboss.arquillian.test.spi.event.suite.AfterClass;
 import org.jboss.arquillian.test.spi.event.suite.Before;
@@ -20,7 +21,7 @@ public abstract class AbstractRuleInstaller {
     public static final String CLASS_KEY_PREFIX = "Class:";
     public static final String METHOD_KEY_PREFIX = "Method:";
 
-    protected abstract List<ExecContext> getExecContexts();
+    protected abstract List<ExecContext> getExecContexts(Event event);
 
     private static void install(String prefix, String script, ExecContext context) {
         if (script != null) {
@@ -45,14 +46,14 @@ public abstract class AbstractRuleInstaller {
     }
 
     public void installClass(@Observes BeforeClass event) {
-        for (ExecContext context : getExecContexts()) {
+        for (ExecContext context : getExecContexts(event)) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             install(CLASS_KEY_PREFIX, script, context);
         }
     }
 
     public void uninstallClass(@Observes AfterClass event) {
-        for (ExecContext context : getExecContexts()) {
+        for (ExecContext context : getExecContexts(event)) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             uninstall(generateKey(CLASS_KEY_PREFIX), script, context);
         }
@@ -65,7 +66,7 @@ public abstract class AbstractRuleInstaller {
             return;
         }
 
-        for (ExecContext context : getExecContexts()) {
+        for (ExecContext context : getExecContexts(event)) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             install(METHOD_KEY_PREFIX, script, context);
         }
@@ -76,7 +77,7 @@ public abstract class AbstractRuleInstaller {
             return;
         }
 
-        for (ExecContext context : getExecContexts()) {
+        for (ExecContext context : getExecContexts(event)) {
             String script = ExtractScriptUtil.extract(context.getExec(), event);
             uninstall(METHOD_KEY_PREFIX, script, context);
         }

@@ -33,6 +33,7 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.RMIContext;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
@@ -60,8 +61,8 @@ public class RuleInstaller extends AbstractRuleInstaller {
     private Instance<ProtocolMetaData> protocolMetaDataInstance;
 
     @SuppressWarnings("deprecation")
-    protected String readAddress() {
-        String address = AddressProvider.provideAddress();
+    protected String readAddress(Event event) {
+        String address = AddressProvider.provideAddress(event);
         if (address != null) {
             return address;
         }
@@ -73,7 +74,7 @@ public class RuleInstaller extends AbstractRuleInstaller {
             return null;
         }
 
-        address = AddressProvider.extractAddress(pmd);
+        address = AddressProvider.extractAddress(event, pmd);
         if (address != null) {
             return address;
         }
@@ -101,14 +102,14 @@ public class RuleInstaller extends AbstractRuleInstaller {
         return null;
     }
 
-    protected List<ExecContext> getExecContexts() {
+    protected List<ExecContext> getExecContexts(Event event) {
         BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
-        List<ExecContext> list = new ArrayList<ExecContext>();
+        List<ExecContext> list = new ArrayList<>();
         if (config.clientAgentPort() == config.containerAgentPort()) {
             list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER))));
         } else {
             list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER, ExecType.CLIENT_CONTAINER))));
-            String address = readAddress();
+            String address = readAddress(event);
             ExecContext remote = (address != null) ? new ExecContext(address, config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER)) : new ExecContext(config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER));
             list.add(remote);
         }

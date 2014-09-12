@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
@@ -41,7 +42,7 @@ public class RuleInstaller extends AbstractRuleInstaller {
         );
     }
 
-    protected List<ExecContext> getExecContexts() {
+    protected List<ExecContext> getExecContexts(Event event) {
         return Collections.singletonList(new ExecContext(getConfiguration().containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER)));
     }
 
