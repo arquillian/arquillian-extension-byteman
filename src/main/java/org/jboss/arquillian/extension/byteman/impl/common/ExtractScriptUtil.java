@@ -35,23 +35,23 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
  * @version $Revision: $
  */
 public final class ExtractScriptUtil {
-    public static String extract(EnumSet<ExecType> match, ClassLifecycleEvent event) {
+    public static String extract(ExecContext context, ClassLifecycleEvent event) {
         BMRule rule = event.getTestClass().getAnnotation(BMRule.class);
         BMRules rules = event.getTestClass().getAnnotation(BMRules.class);
 
-        return createRules(match, rule, rules);
+        return createRules(context, rule, rules);
     }
 
-    public static String extract(EnumSet<ExecType> match, TestLifecycleEvent event) {
+    public static String extract(ExecContext context, TestLifecycleEvent event) {
         BMRule rule = event.getTestMethod().getAnnotation(BMRule.class);
         BMRules rules = event.getTestMethod().getAnnotation(BMRules.class);
 
-        return createRules(match, rule, rules);
+        return createRules(context, rule, rules);
     }
 
-    private static String createRules(EnumSet<ExecType> match, BMRule rule, BMRules rules) {
+    private static String createRules(ExecContext context, BMRule rule, BMRules rules) {
         if (rule != null || rules != null) {
-            List<BMRule> bmRules = toRuleList(match, rule, rules);
+            List<BMRule> bmRules = toRuleList(context, rule, rules);
             if (bmRules.size() > 0) {
                 return GenerateScriptUtil.constructScriptText(bmRules.toArray(new BMRule[bmRules.size()]));
             }
@@ -59,20 +59,24 @@ public final class ExtractScriptUtil {
         return null;
     }
 
-    private static List<BMRule> toRuleList(EnumSet<ExecType> match, BMRule rule, BMRules rules) {
+    private static List<BMRule> toRuleList(ExecContext context, BMRule rule, BMRules rules) {
         List<BMRule> bmRules = new ArrayList<BMRule>();
         if (rule != null) {
-            checkRule(match, bmRules, rule);
+            checkRule(context, bmRules, rule);
         } else {
             for (BMRule bmr : rules.value()) {
-                checkRule(match, bmRules, bmr);
+                checkRule(context, bmRules, bmr);
             }
         }
         return bmRules;
     }
 
-    private static void checkRule(EnumSet<ExecType> match, List<BMRule> bmRules, BMRule rule) {
-        if (match.contains(rule.exec())) {
+    private static void checkRule(ExecContext context, List<BMRule> bmRules, BMRule rule) {
+        EnumSet<ExecType> match = context.getExec();
+        ExecType type = rule.exec();
+
+        if (match.contains(type)) {
+            context.validate(type);
             bmRules.add(rule);
         }
     }

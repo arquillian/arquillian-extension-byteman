@@ -47,14 +47,14 @@ public abstract class AbstractRuleInstaller {
 
     public void installClass(@Observes BeforeClass event) {
         for (ExecContext context : getExecContexts(event)) {
-            String script = ExtractScriptUtil.extract(context.getExec(), event);
+            String script = ExtractScriptUtil.extract(context, event);
             install(CLASS_KEY_PREFIX, script, context);
         }
     }
 
     public void uninstallClass(@Observes AfterClass event) {
         for (ExecContext context : getExecContexts(event)) {
-            String script = ExtractScriptUtil.extract(context.getExec(), event);
+            String script = ExtractScriptUtil.extract(context, event);
             uninstall(generateKey(CLASS_KEY_PREFIX), script, context);
         }
     }
@@ -67,7 +67,7 @@ public abstract class AbstractRuleInstaller {
         }
 
         for (ExecContext context : getExecContexts(event)) {
-            String script = ExtractScriptUtil.extract(context.getExec(), event);
+            String script = ExtractScriptUtil.extract(context, event);
             install(METHOD_KEY_PREFIX, script, context);
         }
     }
@@ -78,7 +78,7 @@ public abstract class AbstractRuleInstaller {
         }
 
         for (ExecContext context : getExecContexts(event)) {
-            String script = ExtractScriptUtil.extract(context.getExec(), event);
+            String script = ExtractScriptUtil.extract(context, event);
             uninstall(METHOD_KEY_PREFIX, script, context);
         }
     }

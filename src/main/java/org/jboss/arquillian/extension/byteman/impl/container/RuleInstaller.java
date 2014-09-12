@@ -43,7 +43,8 @@ public class RuleInstaller extends AbstractRuleInstaller {
     }
 
     protected List<ExecContext> getExecContexts(Event event) {
-        return Collections.singletonList(new ExecContext(getConfiguration().containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER)));
+        BytemanConfiguration configuration = getConfiguration();
+        return Collections.singletonList(new ExecContext(configuration.containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER), configuration));
     }
 
     protected boolean shouldRun(TestEvent event) {

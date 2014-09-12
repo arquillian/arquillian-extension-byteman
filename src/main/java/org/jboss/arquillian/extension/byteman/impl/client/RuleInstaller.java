@@ -106,11 +106,17 @@ public class RuleInstaller extends AbstractRuleInstaller {
         BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
         List<ExecContext> list = new ArrayList<>();
         if (config.clientAgentPort() == config.containerAgentPort()) {
-            list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER))));
+            ExecContext context = new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER)), config);
+            list.add(context);
         } else {
-            list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER, ExecType.CLIENT_CONTAINER))));
+            list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER, ExecType.CLIENT_CONTAINER)), config));
             String address = readAddress(event);
-            ExecContext remote = (address != null) ? new ExecContext(address, config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER)) : new ExecContext(config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER));
+            ExecContext remote;
+            if (address != null) {
+                remote = new ExecContext(address, config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER), config);
+            } else {
+                remote = new ExecContext(config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER), config);
+            }
             list.add(remote);
         }
         return list;
