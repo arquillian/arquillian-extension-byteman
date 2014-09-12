@@ -61,11 +61,21 @@ public class RuleInstaller extends AbstractRuleInstaller {
 
     @SuppressWarnings("deprecation")
     protected String readAddress() {
+        String address = AddressProvider.provideAddress();
+        if (address != null) {
+            return address;
+        }
+
         ProtocolMetaData pmd = protocolMetaDataInstance.get();
 
         if (pmd == null) {
-            // TODO -- bug in ARQ?
+            // PMD is only available per-method level testing
             return null;
+        }
+
+        address = AddressProvider.extractAddress(pmd);
+        if (address != null) {
+            return address;
         }
 
         HTTPContext httpContext = pmd.getContext(HTTPContext.class);

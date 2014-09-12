@@ -44,11 +44,6 @@
         <!--
         <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar>
         -->
-
-        <!-- override from parent -->
-        <maven.compiler.argument.target>1.5</maven.compiler.argument.target>
-        <maven.compiler.argument.source>1.5</maven.compiler.argument.source>
-
     </properties>
 
     <dependencyManagement>
