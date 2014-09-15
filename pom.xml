@@ -197,6 +197,7 @@
                                 <jboss.version>${version.wildfly}</jboss.version>
                                 <path.tools_jar>${path.tools_jar}</path.tools_jar>
                             </systemProperties>
+                            <runOrder>alphabetical</runOrder>
                             <excludes>
                                 <exclude>%regex[.*local.*]</exclude>
                             </excludes>
