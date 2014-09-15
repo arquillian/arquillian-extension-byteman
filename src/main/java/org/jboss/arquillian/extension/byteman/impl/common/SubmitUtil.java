@@ -34,7 +34,7 @@ public class SubmitUtil {
             Submit submit = new Submit(context.getAddress(), context.getPort());
             submit.addScripts(Arrays.asList(new ScriptText(key, script)));
         } catch (Exception e) {
-            throw new SubmitException("Could not uninstall script from file", e);
+            throw new SubmitException("Could not install script from file", e);
         }
     }
 
