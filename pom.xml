@@ -41,6 +41,8 @@
         <version.slf4j>1.7.2</version.slf4j>
         <version.byteman>2.2.0.1</version.byteman>
 
+        <version.jarjar>1.9</version.jarjar>
+
         <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
         <!--
         <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar>
@@ -168,6 +170,31 @@
                     <pushChanges>false</pushChanges>
                     <localCheckout>true</localCheckout>
                 </configuration>
+            </plugin>
+            <!-- We need to jarjar this, since WildFly grabs all org.jboss.byteman as system packages -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>jarjar-maven-plugin</artifactId>
+                <version>${version.jarjar}</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jarjar</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>org.jboss.byteman:byteman-submit</include>
+                            </includes>
+                            <rules>
+                                <rule>
+                                    <pattern>org.jboss.byteman.**</pattern>
+                                    <result>org.jboss.arquillian.extension.byteman.@1</result>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

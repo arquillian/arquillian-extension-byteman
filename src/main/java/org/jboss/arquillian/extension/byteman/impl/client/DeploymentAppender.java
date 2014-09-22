@@ -75,7 +75,11 @@ public class DeploymentAppender implements AuxiliaryArchiveAppender {
 
             // add byteman archive as a resource in the jar, needed to install
             jar.add(new ArchiveAsset(agentJar, ZipExporter.class), BytemanConfiguration.BYTEMAN_JAR);
+        } else {
+            // add byteman-submit; as this is separate jar from agent jar
+            jar.addPackage(Submit.class.getPackage());
         }
+
         return jar;
     }
 }
