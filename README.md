@@ -5,7 +5,7 @@ Mocking 2.0, Runtime bytecode manipulation in Integration tests.
 Usage
 -----
 
-@BMRule and @BMRules can be placed on both Class and Method level in the TestClass. 
+`@BMRule` and `@BMRules` can be placed on both Class and Method level in the TestClass. 
 The given rules will be active during BeforeClass or Before to AfterClass or After.
   
 
