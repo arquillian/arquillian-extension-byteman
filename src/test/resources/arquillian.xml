@@ -22,7 +22,6 @@
         </configuration>
     </container>
 
-
     <extension qualifier="byteman">
         <property name="autoInstallAgent">true</property>
         <property name="agentProperties">org.jboss.byteman.verbose=true</property>

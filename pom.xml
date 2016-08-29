@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>16</version>
+        <version>21</version>
         <relativePath />
     </parent>
 
@@ -30,19 +30,12 @@
     <!-- Properties -->
     <properties>
         <!-- Versioning -->
-        <version.arquillian_core>1.1.5.Final</version.arquillian_core>
-        <version.arquillian_glassfish>1.0.0.CR4</version.arquillian_glassfish>
-        <version.arquillian_weld>1.0.0.CR7</version.arquillian_weld>
-        <version.weld>1.1.13.Final</version.weld>
-        <version.wildfly>8.1.0.Final</version.wildfly>
-        <version.glassfish>3.1.1</version.glassfish>
-        <version.spec>1.0.3.Final</version.spec>
-        <!-- log4j and slf4j are required for Weld Container -->
-        <version.log4j>1.2.14</version.log4j>
-        <version.slf4j>1.7.2</version.slf4j>
-        <version.byteman>2.2.0.1</version.byteman>
+        <version.arquillian_core>1.1.11.Final</version.arquillian_core>
+        <version.arquillian_chameleon>1.0.0.Alpha7</version.arquillian_chameleon>
+        <version.javaee_spec>1.0.3.Final</version.javaee_spec>
+        <version.byteman>3.0.6</version.byteman>
         <version.jarjar>1.9</version.jarjar>
-        <version.xalan>2.7.1</version.xalan>
+        <version.xalan>2.7.2</version.xalan>
         <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
         <!-- <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar> -->
     </properties>
@@ -64,21 +57,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-container-managed</artifactId>
-                <version>${version.wildfly}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.wildfly</groupId>
-                <artifactId>wildfly-arquillian-container-remote</artifactId>
-                <version>${version.wildfly}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.spec</groupId>
                 <artifactId>jboss-javaee-7.0</artifactId>
-                <version>${version.spec}</version>
+                <version>${version.javaee_spec}</version>
                 <type>pom</type>
                 <scope>test</scope>
             </dependency>
@@ -151,7 +132,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Chameleon -->
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
@@ -161,7 +141,7 @@
         <dependency>
             <groupId>org.arquillian.container</groupId>
             <artifactId>arquillian-container-chameleon</artifactId>
-            <version>1.0.0.Alpha7</version>
+            <version>${version.arquillian_chameleon}</version>
             <scope>test</scope>
         </dependency>
 
@@ -189,7 +169,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <systemProperties>
-                        <!-- <jboss.version>${version.wildfly}</jboss.version> -->
                         <path.tools_jar>${path.tools_jar}</path.tools_jar>
                     </systemProperties>
                     <runOrder>alphabetical</runOrder>
@@ -226,28 +205,5 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>arq-wildfly-managed</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <arq.container.chameleon.configuration.chameleonTarget>wildfly:10.1.0.Final:managed
-                                </arq.container.chameleon.configuration.chameleonTarget>
-                            </systemPropertyVariables>
-                            <runOrder>alphabetical</runOrder>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
 
