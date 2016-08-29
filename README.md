@@ -78,6 +78,20 @@ Configuration
 * agentProperties
   Additional properties to use when auto installing the Byteman Agent. See the Byteman documentation for more details.
 
+How to Run
+----------
+As we are using chameleon, it's very easy to run tests against different containers.
+We can run build simply as follows:
+```
+mvn test -Darq.container.chameleon.configuration.chameleonTarget="wildfly:9.0.2.Final:managed"
+```
+To run test against different version of WildFly only change chameleonTarget like follow:
+```
+mvn test -Darq.container.chameleon.configuration.chameleonTarget="wildfly:10.1.0.Final:managed"
+```
+If you have not provided chameleonTarget then it will take default value provided in arquillian.xml.
+
+While running test from IDE, you couldn't access path.tools_jar in arquillian.xml. You will get classDef not found exception.So to run tests from IDE make sure that you set ${path.tools_jar} depending on your local machine path.
 
 Notes
 ------
