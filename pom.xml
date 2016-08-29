@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <!-- Parent -->
     <parent>
@@ -23,8 +24,8 @@
         <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-byteman.git</connection>
         <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-byteman.git</developerConnection>
         <url>git://github.com/arquillian/arquillian-extension-byteman.git</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <!-- Properties -->
     <properties>
@@ -35,7 +36,7 @@
         <version.weld>1.1.13.Final</version.weld>
         <version.wildfly>8.1.0.Final</version.wildfly>
         <version.glassfish>3.1.1</version.glassfish>
-        <version.spec>3.0.2.Final</version.spec>
+        <version.spec>1.0.3.Final</version.spec>
         <!-- log4j and slf4j are required for Weld Container -->
         <version.log4j>1.2.14</version.log4j>
         <version.slf4j>1.7.2</version.slf4j>
@@ -43,9 +44,7 @@
         <version.jarjar>1.9</version.jarjar>
         <version.xalan>2.7.1</version.xalan>
         <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
-        <!--
-        <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar>
-        -->
+        <!-- <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar> -->
     </properties>
 
     <dependencyManagement>
@@ -78,7 +77,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.spec</groupId>
-                <artifactId>jboss-javaee-6.0</artifactId>
+                <artifactId>jboss-javaee-7.0</artifactId>
                 <version>${version.spec}</version>
                 <type>pom</type>
                 <scope>test</scope>
@@ -152,14 +151,24 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Chameleon -->
         <dependency>
             <groupId>org.jboss.arquillian.junit</groupId>
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.jboss.arquillian.protocol</groupId>
-            <artifactId>arquillian-protocol-servlet</artifactId>
+            <groupId>org.arquillian.container</groupId>
+            <artifactId>arquillian-container-chameleon</artifactId>
+            <version>1.0.0.Alpha7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.spec</groupId>
+            <artifactId>jboss-javaee-7.0</artifactId>
+            <type>pom</type>
             <scope>test</scope>
         </dependency>
 
@@ -175,7 +184,22 @@
                     <localCheckout>true</localCheckout>
                 </configuration>
             </plugin>
-            <!-- We need to jarjar this, since WildFly grabs all org.jboss.byteman as system packages -->
+
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <!-- <jboss.version>${version.wildfly}</jboss.version> -->
+                        <path.tools_jar>${path.tools_jar}</path.tools_jar>
+                    </systemProperties>
+                    <runOrder>alphabetical</runOrder>
+                    <excludes>
+                        <exclude>%regex[.*local.*]</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <!-- We need to jarjar this, since WildFly grabs all org.jboss.byteman 
+                as system packages -->
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>jarjar-maven-plugin</artifactId>
@@ -209,157 +233,16 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-managed</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <type>pom</type>
-                </dependency>
-            </dependencies>
             <build>
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
-                            <systemProperties>
-                                <jboss.version>${version.wildfly}</jboss.version>
-                                <path.tools_jar>${path.tools_jar}</path.tools_jar>
-                            </systemProperties>
+                            <systemPropertyVariables>
+                                <arq.container.chameleon.configuration.chameleonTarget>wildfly:10.1.0.Final:managed
+                                </arq.container.chameleon.configuration.chameleonTarget>
+                            </systemPropertyVariables>
                             <runOrder>alphabetical</runOrder>
-                            <excludes>
-                                <exclude>%regex[.*local.*]</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>unpack</id>
-                                <phase>process-test-classes</phase>
-                                <goals>
-                                    <goal>unpack</goal>
-                                </goals>
-                                <configuration>
-                                    <artifactItems>
-                                        <artifactItem>
-                                            <groupId>org.wildfly</groupId>
-                                            <artifactId>wildfly-dist</artifactId>
-                                            <version>${version.wildfly}</version>
-                                            <type>zip</type>
-                                            <overWrite>false</overWrite>
-                                            <outputDirectory>${project.build.directory}</outputDirectory>
-                                        </artifactItem>
-                                    </artifactItems>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>arq-wildfly-remote</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.wildfly</groupId>
-                    <artifactId>wildfly-arquillian-container-remote</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <type>pom</type>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>%regex[.*local.*]</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arq-glassfish-embedded-3.1</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
-                    <version>${version.arquillian_glassfish}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.glassfish.extras</groupId>
-                    <artifactId>glassfish-embedded-all</artifactId>
-                    <version>${version.glassfish}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>%regex[.*local.*]</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>arq-weld-se</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.jboss.arquillian.container</groupId>
-                    <artifactId>arquillian-weld-se-embedded-1.1</artifactId>
-                    <version>${version.arquillian_weld}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.spec</groupId>
-                    <artifactId>jboss-javaee-6.0</artifactId>
-                    <type>pom</type>
-                </dependency>
-                <dependency>
-                    <groupId>org.jboss.weld</groupId>
-                    <artifactId>weld-core</artifactId>
-                    <version>${version.weld}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                    <version>${version.slf4j}</version>
-                    <scope>test</scope>
-                </dependency>
-                <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                    <version>${version.log4j}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>%regex[.*container.*]</exclude>
-                            </excludes>
                         </configuration>
                     </plugin>
                 </plugins>
