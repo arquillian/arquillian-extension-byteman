@@ -89,9 +89,17 @@ To run test against different version of WildFly only change `chameleonTarget` l
 $ mvn test -Darq.container.chameleon.configuration.chameleonTarget="wildfly:10.1.0.Final:managed"
 ```
 
-If you have not provided `chameleonTarget` then it will take default value provided in `arquillian.xml`.
+If you have not provided `chameleonTarget` then it will take default value provided in your `arquillian.xml`.
 
 While running the tests from an IDE, variable `${path.tools_jar}` in `arquillian.xml` is not defined, as it's only defined in Maven build. Thus the execution results with `NoClassDefFoundError`. One possible way to overcome this problem is to hardcode Byteman settings in `arquillian.xml` pointing to the `tools.jar` file from your JDK. See commented out section in `arquillian.xml`.
+
+To run the tests against the remote container make sure that you started your server with following VM arguments:
+
+```bash
+-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:${path.tools_jar}
+```
+
+If you want to do this from Eclipse IDE, go to "Edit Launch Configuration" of your server, append above parameter in VM arguments before you start. 
 
 Notes
 ------
