@@ -16,7 +16,6 @@
  */
 package org.jboss.arquillian.extension.byteman.test.model;
 
-
 /**
  * StatelessTestBean
  *

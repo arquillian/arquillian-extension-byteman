@@ -44,7 +44,6 @@ public class BytemanConfiguration {
     public static String BYTEMAN_CLIENT_AGENT_PORT = "clientAgentPort";
     public static String BYTEMAN_CONTAINER_AGENT_PORT = "containerAgentPort";
 
-
     private Map<String, String> properties;
 
     public BytemanConfiguration(Map<String, String> properties) {

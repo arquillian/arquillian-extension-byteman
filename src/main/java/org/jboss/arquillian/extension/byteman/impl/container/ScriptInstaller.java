@@ -43,7 +43,9 @@ public class ScriptInstaller {
         try {
             if (scriptStream != null && scriptStream.available() > 0) {
                 BytemanConfiguration config = BytemanConfiguration.from(
-                    Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
+                    Thread.currentThread()
+                        .getContextClassLoader()
+                        .getResourceAsStream(BytemanConfiguration.BYTEMAN_CONFIG)
                 );
                 String ruleKey = Thread.currentThread().getName();
                 String ruleScript = GenerateScriptUtil.toString(scriptStream);

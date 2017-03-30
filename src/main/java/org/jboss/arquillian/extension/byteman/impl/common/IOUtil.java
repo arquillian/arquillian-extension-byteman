@@ -64,8 +64,8 @@ public final class IOUtil {
      * Obtains the contents of the specified stream
      * as a String in UTF-8 charset.
      *
-     * @param in
-     * @throws IllegalArgumentException If the stream was not specified
+     * @throws IllegalArgumentException
+     *     If the stream was not specified
      */
     public static String asUTF8String(InputStream in) {
         StringBuilder buffer = new StringBuilder();

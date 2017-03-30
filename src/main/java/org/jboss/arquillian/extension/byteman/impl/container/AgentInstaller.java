@@ -47,7 +47,8 @@ public class AgentInstaller {
             }
             try {
                 // Not only load it, but also attempt to check firstTime variable, since in embedded containers this might be the same jvm
-                Class<?> mainClass = Thread.currentThread().getContextClassLoader().loadClass("org.jboss.byteman.agent.Main");
+                Class<?> mainClass =
+                    Thread.currentThread().getContextClassLoader().loadClass("org.jboss.byteman.agent.Main");
                 if (!(Boolean) mainClass.getDeclaredField("firstTime").get(null)) {
                     return;
                 }
@@ -64,7 +65,8 @@ public class AgentInstaller {
             File bytemanLib = new File(bytemanHome, "lib");
             bytemanLib.mkdirs();
 
-            InputStream bytemanInputJar = Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_JAR);
+            InputStream bytemanInputJar =
+                Thread.currentThread().getContextClassLoader().getResourceAsStream(BytemanConfiguration.BYTEMAN_JAR);
 
             File bytemanJar = new File(bytemanLib, BytemanConfiguration.BYTEMAN_JAR);
 
@@ -72,7 +74,9 @@ public class AgentInstaller {
 
             VirtualMachine vm = VirtualMachine.attach(pid);
             String agentProperties = config.agentProperties();
-            vm.loadAgent(bytemanJar.getAbsolutePath(), "listener:true,port:" + config.containerAgentPort() + (agentProperties != null ? ",prop:" + agentProperties : ""));
+            vm.loadAgent(bytemanJar.getAbsolutePath(),
+                "listener:true,port:" + config.containerAgentPort() + (agentProperties != null ? ",prop:"
+                    + agentProperties : ""));
             vm.detach();
         } catch (IOException e) {
             throw new RuntimeException("Could not write byteman.jar to disk", e);

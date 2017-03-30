@@ -106,14 +106,17 @@ public class RuleInstaller extends AbstractRuleInstaller {
         BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
         List<ExecContext> list = new ArrayList<>();
         if (config.clientAgentPort() == config.containerAgentPort()) {
-            ExecContext context = new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER)), config);
+            ExecContext context =
+                new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER)), config);
             list.add(context);
         } else {
-            list.add(new ExecContext(config.clientAgentPort(), EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER, ExecType.CLIENT_CONTAINER)), config));
+            list.add(new ExecContext(config.clientAgentPort(),
+                EnumSet.complementOf(EnumSet.of(ExecType.CONTAINER, ExecType.CLIENT_CONTAINER)), config));
             String address = readAddress(event);
             ExecContext remote;
             if (address != null) {
-                remote = new ExecContext(address, config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER), config);
+                remote =
+                    new ExecContext(address, config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER), config);
             } else {
                 remote = new ExecContext(config.containerAgentPort(), EnumSet.of(ExecType.CLIENT_CONTAINER), config);
             }
@@ -160,7 +163,9 @@ public class RuleInstaller extends AbstractRuleInstaller {
      * <p/>
      * Hack to get around ARQ-391
      *
-     * @param container the container
+     * @param container
+     *     the container
+     *
      * @return true if DeployableContianer.getDefaultProtocol == Local
      */
     private static boolean isLocalContainer(Container container) {

@@ -28,7 +28,9 @@ public abstract class AbstractRuleInstaller {
             try {
                 SubmitUtil.install(generateKey(prefix), script, context);
             } catch (RuntimeException e) {
-                log.severe(String.format("Error installing '%s' script to %s:%s, exec %s, msg: %s", prefix, context.getAddress(), context.getPort(), context.getExec(), e.getMessage()));
+                log.severe(
+                    String.format("Error installing '%s' script to %s:%s, exec %s, msg: %s", prefix, context.getAddress(),
+                        context.getPort(), context.getExec(), e.getMessage()));
                 throw e;
             }
         }
@@ -39,7 +41,8 @@ public abstract class AbstractRuleInstaller {
             try {
                 SubmitUtil.uninstall(generateKey(prefix), script, context);
             } catch (RuntimeException e) {
-                log.severe(String.format("Error uninstalling '%s' script to  %s:%s, exec %s, msg: %s", prefix, context.getAddress(), context.getPort(), context.getExec(), e.getMessage()));
+                log.severe(String.format("Error uninstalling '%s' script to  %s:%s, exec %s, msg: %s", prefix,
+                    context.getAddress(), context.getPort(), context.getExec(), e.getMessage()));
                 throw e;
             }
         }
@@ -62,7 +65,7 @@ public abstract class AbstractRuleInstaller {
     protected abstract boolean shouldRun(TestEvent event);
 
     public void installMethod(@Observes Before event) {
-        if (shouldRun(event) == false) {
+        if (!shouldRun(event)) {
             return;
         }
 
@@ -73,7 +76,7 @@ public abstract class AbstractRuleInstaller {
     }
 
     public void uninstallMethod(@Observes After event) {
-        if (shouldRun(event) == false) {
+        if (!shouldRun(event)) {
             return;
         }
 

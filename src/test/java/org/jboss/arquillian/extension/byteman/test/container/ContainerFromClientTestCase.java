@@ -43,26 +43,26 @@ public class ContainerFromClientTestCase {
     @Deployment(testable = false)
     private static WebArchive deploy() {
         return ShrinkWrap.create(WebArchive.class)
-                .addClasses(AccountService.class, AccountServlet.class)
-                .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            .addClasses(AccountService.class, AccountServlet.class)
+            .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
     }
-    
+
     @ArquillianResource
     private URL baseURL;
-    
+
     @Test
     public void shouldBeAllOk() throws Exception {
-        HttpURLConnection con = (HttpURLConnection)new URL(baseURL, "account").openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URL(baseURL, "account").openConnection();
         Assert.assertEquals(200, con.getResponseCode());
     }
-    
+
     @Test
     @BMRule(
-            name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure",
-            action = "throw new java.lang.RuntimeException()", 
-            exec = ExecType.CLIENT_CONTAINER)
+        name = "Throw exception on success", targetClass = "AccountService", targetMethod = "forcedMethodLevelFailure",
+        action = "throw new java.lang.RuntimeException()",
+        exec = ExecType.CLIENT_CONTAINER)
     public void shouldForceFailure() throws Exception {
-        HttpURLConnection con = (HttpURLConnection)new URL(baseURL, "account").openConnection();
+        HttpURLConnection con = (HttpURLConnection) new URL(baseURL, "account").openConnection();
         Assert.assertEquals(500, con.getResponseCode());
     }
 }

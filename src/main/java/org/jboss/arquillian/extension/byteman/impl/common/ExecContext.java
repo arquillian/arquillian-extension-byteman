@@ -49,7 +49,9 @@ public class ExecContext {
     @SuppressWarnings("UnusedParameters")
     public void validate(ClassLifecycleEvent event) {
         if (matched.contains(ExecType.CLIENT_CONTAINER) && (AddressProvider.provideAddress(event) == null)) {
-            log.warning(String.format("Can only handle %s container agent address; no %s available.", Submit.DEFAULT_ADDRESS, ProtocolMetaData.class.getSimpleName()));
+            log.warning(
+                String.format("Can only handle %s container agent address; no %s available.", Submit.DEFAULT_ADDRESS,
+                    ProtocolMetaData.class.getSimpleName()));
         }
     }
 
