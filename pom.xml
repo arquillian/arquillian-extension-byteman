@@ -155,6 +155,13 @@
   </dependencies>
 
   <build>
+    <testResources>
+        <testResource>
+            <directory>src/test/resources</directory>
+            <filtering>true</filtering>
+        </testResource>
+    </testResources>
+  
     <plugins>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
@@ -195,8 +202,8 @@
               </includes>
               <rules>
                 <rule>
-                  <pattern>org.jboss.byteman.**</pattern>
-                  <result>org.jboss.arquillian.extension.byteman.@1</result>
+                  <pattern>org.jboss.byteman.agent.submit.**</pattern>
+                  <result>org.jboss.arquillian.extension.byteman.agent.submit.@1</result>
                 </rule>
               </rules>
             </configuration>
