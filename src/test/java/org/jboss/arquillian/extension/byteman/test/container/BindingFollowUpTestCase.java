@@ -17,7 +17,6 @@
 package org.jboss.arquillian.extension.byteman.test.container;
 
 import javax.ejb.EJB;
-import javax.ejb.EJBException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.OverProtocol;
@@ -26,7 +25,6 @@ import org.jboss.arquillian.extension.byteman.api.BMRules;
 import org.jboss.arquillian.extension.byteman.test.model.StatelessManager;
 import org.jboss.arquillian.extension.byteman.test.model.StatelessManagerBean;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.junit.InSequence;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
@@ -34,22 +32,27 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * Test Case for {@link BMRule} with binding
+ * <p>
+ * This testcase is expected to be run before {@link BindingTestCase}.
+ * <p>
+ * It checks that rules are removed after class finishes.<br>
+ * Before the rules were removed each time test method finished.
+ * The fixed behavior uses client call to remove class level BMRules
+ * instead of the container one.
+ * <p>
+ * That's why it's important to use the same names in the rules as
+ * the following testcase uses.
  *
- * @author <a href="mailto:kpiwko@redhat.com">Karel Piwko</a>
- * @version $Revision: $
+ * @author <a href="mailto:ochaloup@redhat.com">Ondra Chaloupka</a>
  */
 @RunWith(Arquillian.class)
 @BMRules({
-    @BMRule(name = BindingTestCase.CREATE_COUNTER_RULE, targetClass = "StatelessManagerBean",
-        targetMethod = "<init>", action = "createCountDown(\"" + BindingTestCase.COUNTDOWN_NAME + "\",1)"),
-    @BMRule(name = BindingTestCase.THROW_EXCEPTION_RULE, 
-        targetClass = "StatelessManagerBean", targetMethod = "bindingCountdownFailure",
-        condition = "countDown(\"" + BindingTestCase.COUNTDOWN_NAME + "\")", action = "throw new RuntimeException(\"Second call throws exception\")")})
-public class BindingTestCase {
-    static final String CREATE_COUNTER_RULE = "Create counter for StatelessManager";
-    static final String THROW_EXCEPTION_RULE = "Fail on second call";
-    static final String COUNTDOWN_NAME = "smb";
+    @BMRule(name = BindingTestCase.CREATE_COUNTER_RULE, targetClass = "StatelessManagerBean", targetMethod = "<init>",
+        action = "createCountDown(\"" + BindingTestCase.COUNTDOWN_NAME + "\",1)"),
+    @BMRule(name = BindingTestCase.THROW_EXCEPTION_RULE, targetClass = "StatelessManagerBean", targetMethod = "bindingCountdownFailure",
+        condition = "countDown(\"" + BindingTestCase.COUNTDOWN_NAME + "\")",
+        action = "throw new RuntimeException(\"Second call throws exception\")")})
+public class BindingFollowUpTestCase {
 
     @Deployment
     @OverProtocol("Servlet 3.0")
@@ -61,14 +64,7 @@ public class BindingTestCase {
     private StatelessManager bean;
 
     @Test
-    @InSequence(1)
     public void shouldNotFailForFirstInvocation() {
-        bean.bindingCountdownFailure();
-    }
-
-    @Test(expected = EJBException.class)
-    @InSequence(2)
-    public void shouldFailForSecondInvocation() throws Throwable {
         bean.bindingCountdownFailure();
     }
 }

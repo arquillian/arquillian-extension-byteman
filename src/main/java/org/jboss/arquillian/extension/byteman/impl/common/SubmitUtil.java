@@ -17,7 +17,9 @@
  */
 package org.jboss.arquillian.extension.byteman.impl.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jboss.byteman.agent.submit.ScriptText;
 import org.jboss.byteman.agent.submit.Submit;
@@ -28,22 +30,37 @@ import org.jboss.byteman.agent.submit.Submit;
  * @author <a href="mailto:aslak@redhat.com">Aslak Knutsen</a>
  * @version $Revision: $
  */
-public class SubmitUtil {
-    public static void install(String key, String script, ExecContext context) {
+final class SubmitUtil {
+	static List<String> listInstalled(ExecContext context) {
+		try {
+			Submit submit = new Submit(context.getAddress(), context.getPort());
+			List<String> scriptNames = new ArrayList<>();
+			for(ScriptText st: submit.getAllScripts()) {
+				scriptNames.add(st.getFileName());
+			}
+			return scriptNames;
+		} catch (Exception e) {
+			throw new SubmitException("Could not list installed scripts for context " + context, e);
+		}
+	}
+
+    static void install(String key, String script, ExecContext context) {
         try {
             Submit submit = new Submit(context.getAddress(), context.getPort());
             submit.addScripts(Arrays.asList(new ScriptText(key, script)));
         } catch (Exception e) {
-            throw new SubmitException("Could not install script from file", e);
+            throw new SubmitException("Could not install script '"
+                + script + "' for context " + context, e);
         }
     }
 
-    public static void uninstall(String key, String script, ExecContext context) {
+    static void uninstall(String key, String script, ExecContext context) {
         try {
             Submit submit = new Submit(context.getAddress(), context.getPort());
             submit.deleteScripts(Arrays.asList(new ScriptText(key, script)));
         } catch (Exception e) {
-            throw new SubmitException("Could not uninstall script from file", e);
+            throw new SubmitException("Could not uninstall script "
+                + script + " for context " + context, e);
         }
     }
 }
