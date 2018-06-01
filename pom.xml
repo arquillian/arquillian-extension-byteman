@@ -30,10 +30,10 @@
   <!-- Properties -->
   <properties>
     <!-- Versioning -->
-    <version.arquillian_core>1.1.13.Final</version.arquillian_core>
+    <version.arquillian_core>1.4.0.Final</version.arquillian_core>
     <version.arquillian_chameleon>1.0.0.Beta1</version.arquillian_chameleon>
     <version.javaee_spec>1.0.3.Final</version.javaee_spec>
-    <version.byteman>3.0.8</version.byteman>
+    <version.byteman>4.0.2</version.byteman>
     <version.jarjar>1.9</version.jarjar>
     <version.xalan>2.7.2</version.xalan>
     <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
