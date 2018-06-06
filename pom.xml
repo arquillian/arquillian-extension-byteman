@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <!-- Parent -->
   <parent>
     <groupId>org.jboss</groupId>
     <artifactId>jboss-parent</artifactId>
     <version>22</version>
-    <relativePath/>
+    <relativePath />
   </parent>
 
   <!-- Model Version -->
@@ -18,13 +17,13 @@
   <artifactId>arquillian-extension-byteman</artifactId>
   <name>Arquillian Extension Byteman</name>
   <description>Byteman integration for the Arquillian project</description>
-  <version>1.0.0.Final-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <scm>
     <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-byteman.git</connection>
     <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-byteman.git</developerConnection>
     <url>git://github.com/arquillian/arquillian-extension-byteman.git</url>
-    <tag>HEAD</tag>
+    <tag>1.0.0</tag>
   </scm>
 
   <!-- Properties -->
@@ -38,7 +37,7 @@
     <version.xalan>2.7.2</version.xalan>
     <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
     <!-- <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar> -->
-    <arq.server.jvm.args.debug></arq.server.jvm.args.debug>
+    <arq.server.jvm.args.debug />
   </properties>
 
   <dependencyManagement>
