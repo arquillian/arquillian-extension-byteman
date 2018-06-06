@@ -17,13 +17,13 @@
   <artifactId>arquillian-extension-byteman</artifactId>
   <name>Arquillian Extension Byteman</name>
   <description>Byteman integration for the Arquillian project</description>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
 
   <scm>
     <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-byteman.git</connection>
     <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-byteman.git</developerConnection>
     <url>git://github.com/arquillian/arquillian-extension-byteman.git</url>
-    <tag>1.0.0</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <!-- Properties -->
