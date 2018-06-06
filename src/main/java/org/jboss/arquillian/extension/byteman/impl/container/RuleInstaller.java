@@ -17,15 +17,18 @@
  */
 package org.jboss.arquillian.extension.byteman.impl.container;
 
-import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 
+import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.ExecContext;
+import org.jboss.arquillian.extension.byteman.impl.common.ExtractScriptUtil;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
@@ -42,11 +45,30 @@ public class RuleInstaller extends AbstractRuleInstaller {
         );
     }
 
-    protected List<ExecContext> getExecContexts(Event event) {
+    public void installClassClient(@Observes BeforeClass event) {
+        ExecContext context = getExecContextContainer(event);
+        if(!isInstalled(CLASS_KEY_PREFIX, context)) {
+	        String script = ExtractScriptUtil.extract(context, event);
+	        install(CLASS_KEY_PREFIX, script, context);
+        }
+    }
+
+    public void installMethodClient(@Observes Before event) {
+        ExecContext context = getExecContextContainer(event);
+        String script = ExtractScriptUtil.extract(context, event);
+        install(METHOD_KEY_PREFIX, script, context);
+    }
+
+    public void uninstallMethodClient(@Observes After event) {
+        ExecContext context = getExecContextContainer(event);
+        String script = ExtractScriptUtil.extract(context, event);
+        uninstall(METHOD_KEY_PREFIX, script, context);
+    }
+
+    protected ExecContext getExecContextContainer(Event event) {
         BytemanConfiguration configuration = getConfiguration();
-        return Collections.singletonList(
-            new ExecContext(configuration.containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER),
-                configuration));
+        return new ExecContext(configuration.containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER),
+                configuration);
     }
 
     protected boolean shouldRun(TestEvent event) {

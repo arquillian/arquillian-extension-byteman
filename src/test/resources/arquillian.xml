@@ -13,17 +13,16 @@
   <container qualifier="chameleon" default="true">
     <configuration>
       <property name="chameleonTarget">wildfly:10.1.0.Final:managed</property>
-      <!-- -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y  -->
       <!-- <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:/usr/lib/jvm/java-6-openjdk/lib/tools.jar</property> -->
 
       <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman
-        -Xbootclasspath/a:${path.tools_jar}
+        -Xbootclasspath/a:${path.tools_jar} ${arq.server.jvm.args.debug} -Dorg.jboss.byteman.debug=true -Dorg.jboss.byteman.verbose=true
       </property>
     </configuration>
   </container>
 
   <extension qualifier="byteman">
     <property name="autoInstallAgent">true</property>
-    <property name="agentProperties">org.jboss.byteman.verbose=true</property>
+    <property name="agentProperties">org.jboss.byteman.verbose=true,prop:org.jboss.byteman.debug=true</property>
   </extension>
 </arquillian>

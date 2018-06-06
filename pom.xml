@@ -30,14 +30,15 @@
   <!-- Properties -->
   <properties>
     <!-- Versioning -->
-    <version.arquillian_core>1.1.13.Final</version.arquillian_core>
+    <version.arquillian_core>1.4.0.Final</version.arquillian_core>
     <version.arquillian_chameleon>1.0.0.Beta1</version.arquillian_chameleon>
     <version.javaee_spec>1.0.3.Final</version.javaee_spec>
-    <version.byteman>3.0.8</version.byteman>
+    <version.byteman>4.0.2</version.byteman>
     <version.jarjar>1.9</version.jarjar>
     <version.xalan>2.7.2</version.xalan>
     <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
     <!-- <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar> -->
+    <arq.server.jvm.args.debug></arq.server.jvm.args.debug>
   </properties>
 
   <dependencyManagement>
@@ -177,6 +178,7 @@
         <configuration>
           <systemProperties>
             <path.tools_jar>${path.tools_jar}</path.tools_jar>
+            <arq.server.jvm.args.debug>${arq.server.jvm.args.debug}</arq.server.jvm.args.debug>
           </systemProperties>
           <runOrder>alphabetical</runOrder>
           <excludes>
@@ -212,5 +214,21 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+        <profile>
+          <id>debug</id>
+          <activation>
+            <property>
+              <name>debug</name>
+            </property>
+          </activation>
+          <properties>
+            <arq.server.jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</arq.server.jvm.args.debug>
+          </properties>
+        </profile>
+      <profile>
+      </profile>
+  </profiles>
 </project>
 

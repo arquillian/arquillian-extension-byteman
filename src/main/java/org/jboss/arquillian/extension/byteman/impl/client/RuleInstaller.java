@@ -20,6 +20,7 @@ package org.jboss.arquillian.extension.byteman.impl.client;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -30,14 +31,22 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.HTTPContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.JMXContext;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaData;
 import org.jboss.arquillian.container.spi.client.protocol.metadata.RMIContext;
+import org.jboss.arquillian.container.spi.event.StopClassContainers;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.core.api.annotation.Inject;
+import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.core.spi.event.Event;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
 import org.jboss.arquillian.extension.byteman.impl.common.AbstractRuleInstaller;
 import org.jboss.arquillian.extension.byteman.impl.common.BytemanConfiguration;
 import org.jboss.arquillian.extension.byteman.impl.common.ExecContext;
+import org.jboss.arquillian.extension.byteman.impl.common.ExtractScriptUtil;
+import org.jboss.arquillian.test.spi.TestClass;
+import org.jboss.arquillian.test.spi.event.suite.After;
+import org.jboss.arquillian.test.spi.event.suite.AfterClass;
+import org.jboss.arquillian.test.spi.event.suite.Before;
+import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
 import org.jboss.arquillian.test.spi.event.suite.TestEvent;
 
 /**
@@ -48,6 +57,7 @@ import org.jboss.arquillian.test.spi.event.suite.TestEvent;
  * @version $Revision: $
  */
 public class RuleInstaller extends AbstractRuleInstaller {
+
     @Inject
     private Instance<Deployment> deploymentInstance;
 
@@ -60,8 +70,60 @@ public class RuleInstaller extends AbstractRuleInstaller {
     @Inject
     private Instance<ProtocolMetaData> protocolMetaDataInstance;
 
+    @Inject
+    private Instance<TestClass> testClass;
+
+    /*
+     * ---- Processing events ----
+     */
+    public void installClassClient(@Observes BeforeClass event) {
+        for (ExecContext context : getExecContextsClient(event)) {
+            String script = ExtractScriptUtil.extract(context, event);
+            install(CLASS_KEY_PREFIX, script, context);
+        }
+    }
+
+    public void uninstallClassClient(@Observes AfterClass event) {
+        for (ExecContext context : getExecContextsClient(event)) {
+            String script = ExtractScriptUtil.extract(context, event);
+            uninstall(CLASS_KEY_PREFIX, script, context);
+        }
+    }
+
+    public void uninstallClassContainer(@Observes StopClassContainers event) {
+        for (ExecContext context : getExecContextsContainer()) {
+            String script = ExtractScriptUtil.extract(context, testClass.get());
+            uninstall(CLASS_KEY_PREFIX, script, context);
+        }
+    }
+
+    public void installMethodClient(@Observes Before event) {
+        if (!shouldClientRun(event)) {
+            return;
+        }
+
+        for (ExecContext context : getExecContextsClient(event)) {
+            String script = ExtractScriptUtil.extract(context, event);
+            install(METHOD_KEY_PREFIX, script, context);
+        }
+    }
+
+    public void uninstallMethodClient(@Observes After event) {
+        if (!shouldClientRun(event)) {
+            return;
+        }
+
+        for (ExecContext context : getExecContextsClient(event)) {
+            String script = ExtractScriptUtil.extract(context, event);
+            uninstall(METHOD_KEY_PREFIX, script, context);
+        }
+    }
+
+    /*
+     * ---- Processing events ----
+     */
     @SuppressWarnings("deprecation")
-    protected String readAddress(Event event) {
+    private String readAddress(Event event) {
         String address = AddressProvider.provideAddress(event);
         if (address != null) {
             return address;
@@ -102,7 +164,7 @@ public class RuleInstaller extends AbstractRuleInstaller {
         return null;
     }
 
-    protected List<ExecContext> getExecContexts(Event event) {
+    private List<ExecContext> getExecContextsClient(Event event) {
         BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
         List<ExecContext> list = new ArrayList<>();
         if (config.clientAgentPort() == config.containerAgentPort()) {
@@ -125,11 +187,18 @@ public class RuleInstaller extends AbstractRuleInstaller {
         return list;
     }
 
-    protected boolean shouldRun(TestEvent event) {
-        return shouldRun(deploymentInstance.get(), containerInstance.get(), event);
+    private List<ExecContext> getExecContextsContainer() {
+        BytemanConfiguration config = BytemanConfiguration.from(descriptorInst.get());
+        return Collections.singletonList(
+            new ExecContext(config.containerAgentPort(), EnumSet.of(ExecType.ALL, ExecType.CONTAINER),
+                    config));
     }
 
-    private static boolean shouldRun(Deployment deployment, Container container, TestEvent event) {
+    private boolean shouldClientRun(TestEvent event) {
+        return shouldClientRun(deploymentInstance.get(), containerInstance.get(), event);
+    }
+
+    private static boolean shouldClientRun(Deployment deployment, Container container, TestEvent event) {
         if (isRunAsClient(deployment, event.getTestClass().getJavaClass(), event.getTestMethod())) {
             return true;
         } else if (isLocalContainer(container)) {

@@ -23,6 +23,7 @@ import java.util.List;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.extension.byteman.api.BMRules;
 import org.jboss.arquillian.extension.byteman.api.ExecType;
+import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.arquillian.test.spi.event.suite.ClassLifecycleEvent;
 import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
 
@@ -35,11 +36,16 @@ import org.jboss.arquillian.test.spi.event.suite.TestLifecycleEvent;
  */
 public final class ExtractScriptUtil {
     public static String extract(ExecContext context, ClassLifecycleEvent event) {
-        BMRule rule = event.getTestClass().getAnnotation(BMRule.class);
-        BMRules rules = event.getTestClass().getAnnotation(BMRules.class);
+        String script = extract(context, event.getTestClass());
+        context.validate(event);
+        return script;
+    }
+
+    public static String extract(ExecContext context, TestClass testClass) {
+        BMRule rule = testClass.getAnnotation(BMRule.class);
+        BMRules rules = testClass.getAnnotation(BMRules.class);
 
         String script = createRules(context, rule, rules);
-        context.validate(event);
         return script;
     }
 
