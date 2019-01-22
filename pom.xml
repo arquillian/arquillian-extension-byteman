@@ -31,7 +31,7 @@
     <!-- Versioning -->
     <version.arquillian_core>1.4.1.Final</version.arquillian_core>
     <version.arquillian_chameleon>1.0.0.CR5</version.arquillian_chameleon>
-    <version.javaee_spec>1.0.3.Final</version.javaee_spec>
+    <version.javaee_spec>1.1.1.Final</version.javaee_spec>
     <version.byteman>4.0.2</version.byteman>
     <version.jarjar>1.9</version.jarjar>
     <version.xalan>2.7.2</version.xalan>
