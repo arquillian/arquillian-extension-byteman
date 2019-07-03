@@ -113,7 +113,7 @@ For JDK 8 and below: the `com.sun.tools.attach` and `org.jboss.byteman` packages
 ```
 
 
-For JDK 9 and above: the `org.jboss.byteman` package has to be exposed as a system package and `-Djdk.attach.allowAttachSelf=true` passed as a system property.
+For JDK 9 and above: the `com.sun.tools.attach` and `org.jboss.byteman` packages have to be exposed as a system packages and `-Djdk.attach.allowAttachSelf=true` passed as a system property.
 
 ```xml
 <property name="javaVmArguments">-Djboss.modules.system.pkgs=org.jboss.byteman -Djdk.attach.allowAttachSelf=true</property>
