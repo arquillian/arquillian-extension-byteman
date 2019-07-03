@@ -227,7 +227,7 @@
           <properties>
               <!-- required for VM attach under JDK 9-->
               <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
-              <byteman.agent.support>-Djboss.modules.system.pkgs=org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
+              <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman-Djdk.attach.allowAttachSelf=true</byteman.agent.support>
           </properties>
           <dependencies/>
       </profile>
