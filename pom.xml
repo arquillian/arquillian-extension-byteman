@@ -17,13 +17,13 @@
   <artifactId>arquillian-extension-byteman</artifactId>
   <name>Arquillian Extension Byteman</name>
   <description>Byteman integration for the Arquillian project</description>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.1.0</version>
 
   <scm>
     <connection>scm:git:git://git@github.com:arquillian/arquillian-extension-byteman.git</connection>
     <developerConnection>scm:git:ssh://github.com/arquillian/arquillian-extension-byteman.git</developerConnection>
     <url>git://github.com/arquillian/arquillian-extension-byteman.git</url>
-    <tag>HEAD</tag>
+    <tag>1.1.0</tag>
   </scm>
 
   <!-- Properties -->
@@ -229,7 +229,7 @@
               <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
               <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
           </properties>
-          <dependencies/>
+          <dependencies />
       </profile>
 
       <profile>
