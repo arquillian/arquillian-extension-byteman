@@ -104,8 +104,17 @@ If you want to do this from Eclipse IDE, go to "Edit Launch Configuration" of yo
 Notes
 ------
 
-When using `autoInstallAgent` with application server such as WildFly, the `com.sun.tools.attach` package has to be exposed as a system package and `tools.jar` added to the bootstrap classpath.
+When using `autoInstallAgent` with application server such as WildFly, a number of JDK version-dependent parameters need to be passed to the JVM:
+
+For JDK 8 and below: the `com.sun.tools.attach` and `org.jboss.byteman` packages have to be exposed as system packages and `tools.jar` added to the bootstrap classpath.
 
 ```xml
 <property name="javaVmArguments">-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:${path.tools_jar}</property>
+```
+
+
+For JDK 9 and above: the `com.sun.tools.attach` and `org.jboss.byteman` packages have to be exposed as a system packages and `-Djdk.attach.allowAttachSelf=true` passed as a system property.
+
+```xml
+<property name="javaVmArguments">-Djboss.modules.system.pkgs=org.jboss.byteman -Djdk.attach.allowAttachSelf=true</property>
 ```

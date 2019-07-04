@@ -35,8 +35,7 @@
     <version.byteman>4.0.7</version.byteman>
     <version.jarjar>1.9</version.jarjar>
     <version.xalan>2.7.2</version.xalan>
-    <path.tools_jar>${java.home}/../lib/tools.jar</path.tools_jar>
-    <!-- <path.tools_jar>/usr/lib/jvm/java-6-openjdk/lib/tools.jar</path.tools_jar> -->
+    <surefire.argline />
     <arq.server.jvm.args.debug />
   </properties>
 
@@ -102,15 +101,7 @@
       <artifactId>shrinkwrap-spi</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>com.sun</groupId>
-      <artifactId>tools</artifactId>
-      <version>1.6.0</version>
-      <scope>system</scope>
-      <systemPath>${path.tools_jar}</systemPath>
-    </dependency>
-
-    <!-- org.joss.byteman -->
+    <!-- org.jboss.byteman -->
 
     <dependency>
       <groupId>org.jboss.byteman</groupId>
@@ -175,8 +166,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>${surefire.argline}</argLine>
           <systemProperties>
-            <path.tools_jar>${path.tools_jar}</path.tools_jar>
+            <arq.server.jvm.args.byteman>${byteman.agent.support}</arq.server.jvm.args.byteman>
             <arq.server.jvm.args.debug>${arq.server.jvm.args.debug}</arq.server.jvm.args.debug>
           </systemProperties>
           <runOrder>alphabetical</runOrder>
@@ -185,8 +177,7 @@
           </excludes>
         </configuration>
       </plugin>
-      <!-- We need to jarjar this, since WildFly grabs all org.jboss.byteman
-          as system packages -->
+      <!-- We need to jarjar this, since WildFly grabs all org.jboss.byteman as system packages -->
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>jarjar-maven-plugin</artifactId>
@@ -227,19 +218,75 @@
   </build>
 
   <profiles>
-        <profile>
-          <id>debug</id>
+      <!-- three Byteman-related profiles for configuring use of Byteman on different platforms/JDKs-->
+      <profile>
+          <id>use-toolsjar-jigsaw</id>
           <activation>
-            <property>
-              <name>debug</name>
-            </property>
+              <jdk>[1.9,)</jdk>
           </activation>
           <properties>
-            <arq.server.jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</arq.server.jvm.args.debug>
+              <!-- required for VM attach under JDK 9-->
+              <surefire.argline>-Djdk.attach.allowAttachSelf=true</surefire.argline>
+              <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Djdk.attach.allowAttachSelf=true</byteman.agent.support>
           </properties>
-        </profile>
-      <profile>
+          <dependencies/>
       </profile>
+
+      <profile>
+          <id>use-toolsjar-default</id>
+          <activation>
+              <file>
+                  <exists>${java.home}/../lib/tools.jar</exists>
+              </file>
+          </activation>
+          <properties>
+              <tools.jar>${java.home}/../lib/tools.jar</tools.jar>
+              <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:${tools.jar}</byteman.agent.support>
+          </properties>
+          <dependencies>
+              <dependency>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                  <version>1.8</version>
+                  <scope>system</scope>
+                  <systemPath>${tools.jar}</systemPath>
+              </dependency>
+          </dependencies>
+      </profile>
+
+      <profile>
+          <id>use-toolsjar-osx</id>
+          <activation>
+              <file>
+                  <exists>${java.home}/../Classes/classes.jar</exists>
+              </file>
+          </activation>
+          <properties>
+              <tools.jar>${java.home}/../Classes/classes.jar</tools.jar>
+              <byteman.agent.support>-Djboss.modules.system.pkgs=com.sun.tools.attach,org.jboss.byteman -Xbootclasspath/a:${tools.jar}</byteman.agent.support>
+          </properties>
+          <dependencies>
+              <dependency>
+                  <groupId>com.sun</groupId>
+                  <artifactId>tools</artifactId>
+                  <version>1.8</version>
+                  <scope>system</scope>
+                  <systemPath>${tools.jar}</systemPath>
+              </dependency>
+          </dependencies>
+      </profile>
+
+       <profile>
+         <id>debug</id>
+         <activation>
+           <property>
+             <name>debug</name>
+           </property>
+         </activation>
+         <properties>
+           <arq.server.jvm.args.debug>-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y</arq.server.jvm.args.debug>
+         </properties>
+       </profile>
   </profiles>
 </project>
 
