@@ -29,7 +29,7 @@
   <!-- Properties -->
   <properties>
     <!-- Versioning -->
-    <version.arquillian_core>1.6.0.Final</version.arquillian_core>
+    <version.arquillian_core>1.8.0.Final</version.arquillian_core>
     <version.arquillian_chameleon>1.0.0.CR6</version.arquillian_chameleon>
     <version.javaee_spec>1.1.1.Final</version.javaee_spec>
     <version.byteman>4.0.16</version.byteman>
