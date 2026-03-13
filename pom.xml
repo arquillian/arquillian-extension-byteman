@@ -34,7 +34,7 @@
     <version.javaee_spec>1.1.1.Final</version.javaee_spec>
     <version.byteman>4.0.16</version.byteman>
     <version.jarjar>1.9</version.jarjar>
-    <version.xalan>2.7.2</version.xalan>
+    <version.xalan>2.7.3</version.xalan>
     <surefire.argline />
     <arq.server.jvm.args.debug />
   </properties>
